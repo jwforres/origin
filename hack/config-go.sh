@@ -71,3 +71,5 @@ export GOPATH
 
 # Unset GOBIN in case it already exists in the current session.
 unset GOBIN
+
+OS_BUILD_TAGS=${OS_BUILD_TAGS-}
