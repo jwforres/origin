@@ -265,8 +265,10 @@ func (c *config) runAssetServer() {
 		MaxHeaderBytes: 1 << 20,
 	}
 
-	glog.Infof("Started OpenShift static asset server at http://%s", addr)
-	glog.Fatal(osAssets.ListenAndServe())
+	go util.Forever(func() {
+		glog.Infof("Started OpenShift static asset server at http://%s", addr)
+		glog.Fatal(osAssets.ListenAndServe())
+	}, 0)
 }
 
 func (c *config) runKubelet() {
