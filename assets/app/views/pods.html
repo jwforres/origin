@@ -1,5 +1,13 @@
-<div>
-  <div>
+<div class="row">
+  <nav class="col-sm-2 col-md-1" role="navigation">
+      <ul class="nav nav-pills nav-stacked" hawtio-main-nav>
+      </ul>
+  </nav>
+  <nav class="col-sm-2 col-md-1" role="navigation">
+      <ul class="nav nav-pills nav-stacked" hawtio-sub-tabs>
+      </ul>
+  </nav> 
+  <div class="col-sm-8 col-md-10" ng-controller="ProjectController">
     <h3>Pods by label:</h3>
     <div class="row" style="margin-bottom: 10px;" ng-repeat="(label_key, label_values) in podsByLabel">
       <div class="col-md-6 animate-repeat" ng-repeat="(label_value, label_pods) in label_values">
