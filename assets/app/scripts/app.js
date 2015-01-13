@@ -26,6 +26,8 @@ angular
         tab = builder.create()
                      .id(pluginName)
                      .title(function () { return "Overview"; })
+                     .click(function() {  $("body").removeClass("show-drawer"); })
+                     .template(function() {return '<li ng-class=\"{ active: item.isSelected() }\">\n  <a ng-href=\"{{item.href()}}\" ng-click=\"item.click($event)\"><span class=\"fa fa-dashboard fa-fw\"></span> {{item.title()}}</a>\n</li>\n';})
                      .href(function () { 
                         var injector = HawtioCore.injector;
                         if (injector) {
@@ -42,6 +44,8 @@ angular
         tab2 = builder.create()
                       .id(builder.join(pluginName, '2'))
                       .title(function () { return "Browse"; })
+                      .click(function() {  $("body").addClass("show-drawer"); })
+                      .template(function() {return '<li ng-class=\"{ active: item.isSelected() }\">\n  <a ng-href=\"{{item.href()}}\" ng-click=\"item.click($event);\"><span class=\"fa fa-sitemap fa-fw\"></span> {{item.title()}}</a><div class=\"sidenav-secondary\"><h2 class=\"hidden-xs\">{{item.title()}}</h2><ul class=\"nav\" hawtio-sub-tabs></ul></div>\n</li>\n';})
                       .href(function () { 
                         var injector = HawtioCore.injector;
                         if (injector) {
@@ -89,10 +93,19 @@ angular
         redirectTo: '/'
       });
   })
-  .run(["HawtioNav", "$timeout", function (HawtioNav, $timeout) {
+  .run(["$rootScope", "HawtioNav", "$timeout", function ($rootScope, HawtioNav, $timeout) {
         //Test.log.debug('loaded');
         HawtioNav.add(tab);
         HawtioNav.add(tab2);
+        $rootScope.$on("$viewContentLoaded", function (event, next, current) {
+          var documentHeight = 0;
+          var navbarpfHeight = 0;
+          var colHeight = 0;
+          if ( $('.navbar-pf .navbar-toggle').is(':hidden') ) {
+            documentHeight = $(document).height();
+          }
+          $('.container-main').children('.row').children('[class*="col-"]').css({ "min-height":documentHeight});
+        });
   }]);
 
 hawtioPluginLoader.addModule('openshiftConsole');
