@@ -1,12 +1,17 @@
-<div class="row">
-  <nav class="col-sm-2 col-md-1" role="navigation">
+<sidebar ng-init="heading='Overview'"></sidebar>
+
+
+  <!-- <nav class="col-sm-2 col-md-1" role="navigation">
       <ul class="nav nav-pills nav-stacked" hawtio-main-nav>
       </ul>
   </nav>
   <nav class="col-sm-2 col-md-1" role="navigation">
       <ul class="nav nav-pills nav-stacked" hawtio-sub-tabs>
       </ul>
-  </nav> 
+  </nav> -->
+
+<div class="container-fluid container-main">
+  <div class="row">
   <div class="col-sm-8 col-md-10" ng-controller="ProjectController">
     <h1 style="margin-top: 10px;">Project {{project.displayName || project.id}}</h1>
     <div class="small muted" style="margin-top: -15px; margin-bottom: 20px" ng-if="project.description">{{project.description}}</div>
@@ -71,5 +76,6 @@
         </div>
       </div>
     </section>
+  </div>
   </div>
 </div>
