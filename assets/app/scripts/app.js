@@ -68,8 +68,8 @@ angular
                         }
                         return "/project/:project/browse"; 
                       })
-                      .subPath("Builds", "builds", builder.join(templatePath, 'pods.html'))
-                      .subPath("Images", "images", builder.join(templatePath, 'pods.html'))
+                      .subPath("Builds", "builds", builder.join(templatePath, 'builds.html'))
+                      .subPath("Images", "images", builder.join(templatePath, 'images.html'))
                       .subPath("Pods", "pods", builder.join(templatePath, 'pods.html'))                      
                       .build();
   }])
@@ -93,28 +93,14 @@ angular
         }
       })      
       .when('/project/:project/browse/builds', {
-        templateUrl: 'views/pods.html' // TODO need the right template for this
+        templateUrl: 'views/builds.html'
       })      
       .when('/project/:project/browse/images', {
-        templateUrl: 'views/pods.html' // TODO need the right template for this
+        templateUrl: 'views/images.html'
       })      
       .when('/project/:project/browse/pods', {
         templateUrl: 'views/pods.html'
-      })
-      .when('/project/:project/2browse2', {
-        redirectTo: function(params) {
-          return '/project/' + params.project + "/2browse2/2pods2";  // TODO decide what subtab to default to here
-        }
-      })      
-      .when('/project/:project/2browse2/2builds2', {
-        templateUrl: 'views/pods.html' // TODO need the right template for this
-      })      
-      .when('/project/:project/2browse2/2images2', {
-        templateUrl: 'views/pods.html' // TODO need the right template for this
-      })      
-      .when('/project/:project/2browse2/2pods2', {
-        templateUrl: 'views/pods.html'
-      })      
+      }) 
       .otherwise({
         redirectTo: '/'
       });

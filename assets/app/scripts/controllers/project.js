@@ -132,7 +132,8 @@ angular.module('openshiftConsole')
         $scope.images = images.by("metadata.name");
         $scope.imagesByDockerReference = images.by("dockerImageReference");
       });
-
+      
+      console.log("images (subscribe)", $scope.images);
       console.log("imagesByDockerReference (subscribe)", $scope.imagesByDockerReference);
     };
     $scope.watches.push(DataService.watch("images", $scope, imagesCallback));

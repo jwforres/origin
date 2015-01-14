@@ -1,0 +1,34 @@
+<div ng-controller="ProjectController">
+  <project-nav projects="projects" selected="projectName"></project-nav>
+  <div class="wrap">
+    <sidebar ng-init="heading='Browse'"></sidebar>
+
+    <div class="container-fluid container-main">
+      <div class="row">
+        <div class="col-sm-8 col-md-10">
+          <div style="margin-bottom: 10px;" ng-repeat="build in builds">
+            <h3>{{build.metadata.labels.buildconfig}} <span class="small">({{build.metadata.name}})</span></h3>
+            <div>Created: <relative-timestamp timestamp="build.metadata.creationTimestamp"></relative-timestamp></div>            
+            <div>Status: {{build.status}}</div>
+            <div>Build strategy: {{build.parameters.strategy.type}}</div>
+            <div ng-switch="build.parameters.strategy.type">
+              <div ng-switch-when="STI">
+                Builder image: {{build.parameters.strategy.stiStrategy.builderImage}}
+              </div>
+              <div ng-switch-default></div>
+            </div>
+            <div ng-if="build.parameters.source">
+              <div ng-switch="build.parameters.source.type">
+                <div ng-switch-when="Git">Source repo: {{build.parameters.source.git.uri}}</span>
+                <!-- TODO add git ref details -->
+                <div ng-switch-default></div>
+              </span>
+            </div>
+            <div>Output image: {{build.parameters.output.imageTag}}</div>   
+            <div>Output image registry: {{build.parameters.output.registry}}</div>   
+          </div>      
+        </div>
+      </div>
+    </div>
+  </div
+</div>
