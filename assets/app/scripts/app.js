@@ -69,8 +69,10 @@ angular
                         return "/project/:project/browse"; 
                       })
                       .subPath("Builds", "builds", builder.join(templatePath, 'builds.html'))
+                      .subPath("Deployments", "deployments", builder.join(templatePath, 'deployments.html'))
                       .subPath("Images", "images", builder.join(templatePath, 'images.html'))
-                      .subPath("Pods", "pods", builder.join(templatePath, 'pods.html'))                      
+                      .subPath("Pods", "pods", builder.join(templatePath, 'pods.html'))
+                      .subPath("Services", "services", builder.join(templatePath, 'services.html'))
                       .build();
   }])
   .config(function ($routeProvider) {
@@ -95,12 +97,18 @@ angular
       .when('/project/:project/browse/builds', {
         templateUrl: 'views/builds.html'
       })      
+      .when('/project/:project/browse/deployments', {
+        templateUrl: 'views/deployments.html'
+      })            
       .when('/project/:project/browse/images', {
         templateUrl: 'views/images.html'
       })      
       .when('/project/:project/browse/pods', {
         templateUrl: 'views/pods.html'
       }) 
+      .when('/project/:project/browse/services', {
+        templateUrl: 'views/services.html'
+      })       
       .otherwise({
         redirectTo: '/'
       });

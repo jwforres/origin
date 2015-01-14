@@ -1,0 +1,22 @@
+<div ng-controller="ProjectController">
+  <project-nav projects="projects" selected="projectName"></project-nav>
+  <div class="wrap">
+    <sidebar ng-init="heading='Browse'"></sidebar>
+
+    <div class="container-fluid container-main">
+      <div class="row">
+        <div class="col-sm-8 col-md-10">
+          <div style="margin-bottom: 10px;" ng-repeat="service in services">
+            <h3>{{service.id}}</h3>
+            <div>Created: <relative-timestamp timestamp="service.creationTimestamp"></relative-timestamp></div>
+            <div>IP: {{service.portalIP}}</div>
+            <div>Port: {{service.port}}</div>
+            <div>Container port: {{service.containerPort}}</div>
+            <div>Protocol: {{service.protocol}}</div>
+            <div>Selectors:<span ng-repeat="(selectorLabel, selectorValue) in service.selector"> {{selectorLabel}}={{selectorValue}}</span></div>
+          </div>      
+        </div>
+      </div>
+    </div>
+  </div
+</div>

@@ -41,13 +41,13 @@ angular.module('openshiftConsole')
 
     var projectsCallback = function(projects) {
       $scope.$apply(function(){
-        DataService.objectsByAttribute(projects.items, "metadata.name", $scope.projects);      
+        $scope.projects = projects.by("metadata.name");
       });
 
       console.log("projects", $scope.projects);
     };
     
-    DataService.getList("projects", projectsCallback, $scope);    
+    DataService.list("projects", $scope, projectsCallback);
 
     var podsCallback = function(pods) {
       $scope.$apply(function() {
