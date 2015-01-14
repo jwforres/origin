@@ -56,7 +56,7 @@ angular
                         if (this.isSelected()) {
                           $("body").addClass("show-drawer");
                         }
-                        return '<li ng-class=\"{ active: item.isSelected() }\">\n  <a ng-href=\"{{item.href()}}\" ng-click=\"item.click($event);\"><span class=\"fa fa-sitemap fa-fw\"></span> {{item.title()}}</a><div ng-if=\"item.isSelected()\"  class=\"sidenav-secondary\"><h2 class=\"hidden-xs\">{{item.title()}}</h2><ul class=\"nav\" hawtio-sub-tabs></ul></div>\n</li>\n';
+                        return '<li ng-class=\"{ active: item.isSelected() }\">\n  <a ng-href=\"{{item.href()}}\" ng-click=\"item.click($event);\"><span class=\"fa fa-sitemap fa-fw\"></span> {{item.title()}}</a><div ng-if=\"item.isSelected()\"  class=\"sidenav-secondary\"><h2 class=\"hidden-xs\">{{item.title()}}</h2><ul class=\"nav navbar-sidenav-secondary\" hawtio-sub-tabs></ul></div>\n</li>\n';
                       })
                       .href(function () { 
                         var injector = HawtioCore.injector;
@@ -113,23 +113,10 @@ angular
         redirectTo: '/'
       });
   })
-  .run(["$rootScope", "HawtioNav", "$timeout", function ($rootScope, HawtioNav, $timeout) {
+  .run(["HawtioNav", "$timeout", function (HawtioNav, $timeout) {
         //Test.log.debug('loaded');
         HawtioNav.add(tab);
         HawtioNav.add(tab2);
-
-        $rootScope.$on("$viewContentLoaded", function (event, next, current) {
-          // min height calculation for the second level nav drawer
-          $timeout(function () {
-            var documentHeight = 0;
-            var navbarpfHeight = 0;
-            var colHeight = 0;
-            if ( $('.navbar-pf .navbar-toggle').is(':hidden') ) {
-              documentHeight = $(document).height();
-            }
-            $('.container-main').children('.row').children('[class*="col-"]').css({ "min-height":documentHeight});
-          }, 0);
-        });
   }]);
 
 hawtioPluginLoader.addModule('openshiftConsole');
