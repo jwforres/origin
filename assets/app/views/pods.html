@@ -1,20 +1,23 @@
-<sidebar ng-init="heading='Browse'"></sidebar>
+<div ng-controller="ProjectController">
+  <project-nav projects="projects" selected="projectName"></project-nav>
+  <div class="wrap">
+    <sidebar ng-init="heading='Browse'"></sidebar>
 
-
-<div class="container-fluid container-main">
-  <div class="row">
-    <div class="col-sm-8 col-md-10" ng-controller="ProjectController">
-      <h3>Pods by label:</h3>
-      <div class="row" style="margin-bottom: 10px;" ng-repeat="(label_key, label_values) in podsByLabel">
-        <div class="col-md-6 animate-repeat" ng-repeat="(label_value, label_pods) in label_values">
-          <div class="tile">
-            <h4>{{label_key}}: {{label_value}}</h4>
-            <span class="animate-repeat pod-{{pod.desiredState.status.toLowerCase()}}" ng-repeat="pod in label_pods" style="width: 40px; height: 40px; margin-right: 5px; margin-bottom: 5px; display: inline-block;">
-            </span>
-          </div>
+    <div class="container-fluid container-main">
+      <div class="row">
+        <div class="col-sm-8 col-md-10">
+          <h3>Pods by label:</h3>
+          <div class="row" style="margin-bottom: 10px;" ng-repeat="(label_key, label_values) in podsByLabel">
+            <div class="col-md-6 animate-repeat" ng-repeat="(label_value, label_pods) in label_values">
+              <div class="tile">
+                <h4>{{label_key}}: {{label_value}}</h4>
+                <span class="animate-repeat pod-{{pod.desiredState.status.toLowerCase()}}" ng-repeat="pod in label_pods" style="width: 40px; height: 40px; margin-right: 5px; margin-bottom: 5px; display: inline-block;">
+                </span>
+              </div>
+            </div>
+          </div>      
         </div>
-      </div>      
+      </div>
     </div>
-  </div>
+  </div
 </div>
-

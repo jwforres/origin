@@ -12,6 +12,7 @@ angular.module('openshiftConsole')
     $scope.projectName = $routeParams.project;
     $scope.project = {};
     $scope.projectPromise = $.Deferred();
+    $scope.projects = {};
     $scope.pods = {};
     $scope.podsPromise = $.Deferred();
     $scope.services = {};
@@ -37,6 +38,16 @@ angular.module('openshiftConsole')
     };
 
     DataService.get("projects", $scope.projectName, $scope, projectCallback);
+
+    var projectsCallback = function(projects) {
+      $scope.$apply(function(){
+        DataService.objectsByAttribute(projects.items, "metadata.name", $scope.projects);      
+      });
+
+      console.log("projects", $scope.projects);
+    };
+    
+    DataService.getList("projects", projectsCallback, $scope);    
 
     var podsCallback = function(pods) {
       $scope.$apply(function() {
