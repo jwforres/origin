@@ -46,10 +46,8 @@
                           <span ng-if="deployment.details && deployment.details.causes && deployment.details.causes.length > 0">
                             <span>, triggered by 
                               <span ng-repeat="cause in deployment.details.causes">
-                                <span ng-switch="cause.type">
-                                  <span ng-switch-when="ImageChange">new image for {{cause.imageTrigger.repositoryName | imageName}}:{{cause.imageTrigger.tag}}</span>
-                                  <span ng-switch-when="ConfigChange">deployment configuration change</span>
-                                </span>
+                                <span ng-if="cause.type == 'ImageChange'">new image for {{cause.imageTrigger.repositoryName | imageName}}:{{cause.imageTrigger.tag}}</span>
+                                <span ng-if="cause.type == 'ConfigChange'">deployment configuration change</span>
                               </span>
                             </span>
                           </span>
