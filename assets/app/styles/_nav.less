@@ -1,32 +1,31 @@
-
-/* colors light 
+/* colors light */
 .console-os .navbar-pf {background: #34383C;}
 .console-os .navbar-project,
 .console-os .sidebar {background: #e9eaec;}
-.console-os.show-drawer .sidebar .sidebar-drawer,
-.console-os .nav.navbar-sidenav > li > a:hover,
-.console-os .nav.navbar-sidenav > li.active > a,
-.console-os .sidebar .nav.navbar-sidenav > li.active > a:hover {background-color: #e0e2e4;}
-.console-os .nav.navbar-sidenav > li > a:hover {background-color: #d7d9dc}
+.console-os .sidebar .sidebar-drawer,
+.console-os .nav.nav-sidenav > li > a:hover,
+.console-os .nav.nav-sidenav > li.active > a,
+.console-os .sidebar .nav.nav-sidenav > li.active > a:hover {background-color: #e0e2e4;}
+.console-os .nav.nav-sidenav > li > a:hover {background-color: #d7d9dc}
 
 .console-os .navbar-project,
-.console-os .navbar-sidenav > li {border-bottom: 1px solid #e0e2e4;}
-.console-os .navbar-sidenav > li > a {color: inherit;}
-*/
-/* colors dark */
+.console-os .nav-sidenav > li {border-bottom: 1px solid #e0e2e4;}
+.console-os .nav-sidenav > li > a {color: inherit;}
+
+/* colors dark
 .console-os .navbar-pf {background: #34383C;}
 .console-os .navbar-project,
 .console-os .sidebar {background: #4c5157;}
-.console-os.show-drawer .sidebar .sidebar-drawer,
-.console-os .nav.navbar-sidenav > li > a:hover,
-.console-os .nav.navbar-sidenav > li.active > a,
-.console-os .sidebar .nav.navbar-sidenav > li.active > a:hover {background-color: #636b73;}
-.console-os .nav.navbar-sidenav > li > a:hover {background-color: #737c85}
+.console-os .sidebar .sidebar-drawer,
+.console-os .nav.nav-sidenav > li > a:hover,
+.console-os .nav.nav-sidenav > li.active > a,
+.console-os .sidebar .nav.nav-sidenav > li.active > a:hover {background-color: #636b73;}
+.console-os .nav.nav-sidenav > li > a:hover {background-color: #737c85}
 
 .console-os .navbar-project,
-.console-os .navbar-sidenav > li {border-bottom: 1px solid #44494e;}
-.console-os .navbar-sidenav > li > a {color: #f2f3f4;}
-
+.console-os .nav-sidenav > li {border-bottom: 1px solid #44494e;}
+.console-os .nav-sidenav > li > a {color: #f2f3f4;}
+ */
 
 
  .tile {
@@ -94,7 +93,7 @@
   display: block;
 }
 .console-os .navbar-project {
-  padding: 0;
+  padding-bottom: 20px;
   position: relative;
 }
 .console-os .navbar-project-menu {
@@ -124,14 +123,19 @@
 }
 
 /* navbar-sidebar */
-.console-os .sidebar .navbar-sidenav span {
+.console-os .sidebar .nav-sidenav span {
   margin-left: 10px;
 }
-.console-os .sidenav-header:before {
+.console-os .sidebar-header:before {
   content: " ";
   display: table;
 }
-.console-os .sidenav-header:after {
+.sidebar-header { /* override pf */
+  border: 0;
+  padding-bottom: 0;
+  margin: 0;
+}
+.console-os .sidebar-header:after {
   content: " ";
   display: table;
   clear: both;
@@ -141,6 +145,7 @@
   -webkit-box-shadow: none;
   box-shadow: none;
   padding: 0;
+  max-height: none;
 }
 .console-os .navbar-sidebar button.navbar-toggle {
   margin-right: 10px;
@@ -154,8 +159,8 @@
 .console-os .sidenav-secondary a {
   padding-left: 54px;
 }
-.console-os .navbar-sidenav-secondary > li > a:hover, 
-.console-os .navbar-sidenav-secondary > li > a:focus {
+.console-os .nav-sidenav-secondary > li > a:hover, 
+.console-os .nav-sidenav-secondary > li > a:focus {
   background-color: transparent;
 }
 
@@ -177,7 +182,7 @@
 
 @media (min-width: 768px) {
   .console-os .container-main {
-    min-height: 650px; /* setting min until their is another way to extend sidebar fully */ 
+    min-height: 680px; /* setting min until their is another way to extend sidebar fully */ 
   }
   .console-os .navbar-project {
     padding: 0 0 15px 0;
@@ -192,15 +197,15 @@
     -webkit-transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
     transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
     transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
-    transition-duration: 200ms;
-    margin-left: 100px;
+    transition-duration: 100ms;
+    margin-left: 101px;
   }
   .console-os .sidebar {
     position: absolute;
     height: 100%;
     left: 0;
     width: 100px;
-    min-height: 650px; /* setting min until their is another way to extend sidebar fully */
+    min-height: 680px; /* setting min until their is another way to extend sidebar fully */
   }
   .console-os .navbar-sidebar {
     font-size: 15px;
@@ -215,9 +220,12 @@
   .console-os.show-drawer .wrap {
     margin-left: 380px;
   }
+  .console-os.show-drawer .sidebar .sidebar-drawer {
+    width: 380px;
+  }
   .console-os .sidebar .sidebar-drawer {
     display: block;
-    width: 380px;
+    width: 81px;
     position: absolute;
     top: 0;
     left: 0;
@@ -233,10 +241,10 @@
     position: absolute;
     box-shadow: inset -3px 0px 3px -3px rgba(0,0,0,0.1);
   }
-  .console-os .navbar-sidenav > li {
+  .console-os .nav-sidenav > li {
     position: initial;
   }
-  .console-os .navbar-sidenav > li > a {
+  .console-os .nav-sidenav > li > a {
     text-align: center;
     padding: 15px;
   }
@@ -244,7 +252,7 @@
     display: block;
     margin: 0;
   }
-  .console-os .sidebar .navbar-sidenav .fa {
+  .console-os .sidebar .nav-sidenav .fa {
     display: inline;
   }
   .console-os .sidenav-secondary {
@@ -257,9 +265,14 @@
     margin-left: 120px;
     width: 250px;
   }
+  .console-os .navbar-sidebar .sidenav-secondary {
+    font-size: 12px;
+  }
   .console-os .navbar-sidebar .sidenav-secondary a {
     padding: 10px 0;
-    font-size: 12px;
+  }
+  .nav.nav-sidenav-secondary {
+    margin-bottom: 20px;
   }
   .console-os .navbar-project-menu {
     width: 340px;
@@ -272,7 +285,7 @@
   .console-os .sidebar {
     width:80px;
   }
-  .console-os .navbar-sidenav > li > a {
+  .console-os .nav-sidenav > li > a {
     padding: 15px 10px;
   }
   .console-os .sidebar .navbar-sidebar {
@@ -283,51 +296,54 @@
     width: 175px;
   }
   .console-os .wrap {
-    margin-left: 80px;
+    margin-left: 81px;
   }
   .console-os.show-drawer .wrap {
     margin-left: 280px;
   }
-  .console-os .sidebar .sidebar-drawer {
+  .console-os.show-drawer .sidebar .sidebar-drawer {
     width: 280px;
   }
  }
+ @media (min-width: 992px) { 
+  .console-os .sidebar .sidebar-drawer {
+      width: 101px;
+    }
+}
 @media (min-width:1600px)  {
   .console-os.show-drawer .wrap {
-    margin-left: 500px;
+    margin-left: 480px;
   }
-  .console-os .sidebar .sidebar-drawer {
-    width: 500px;
+  .console-os.show-drawer .sidebar .sidebar-drawer {
+    width: 480px;
   }
   .console-os .navbar-project-menu {
-    width: 460px;
+    width: 440px;
   }
   .console-os .navbar-search {
-    margin-left: 500px;
+    margin-left: 480px;
   }
   .console-os .sidebar {
-    width: 180px;
+    width: 160px;
   }
-  .console-os .navbar-sidenav > li > a {
+  .console-os .nav-sidenav > li > a {
     text-align: left;
     padding: 15px 20px;
   }
   .console-os.show-drawer .sidebar .sidenav-secondary {
-    margin-left: 200px;
+    margin-left: 180px;
     width: 280px;
   }
   .console-os .wrap {
-    margin-left: 180px;
+    margin-left: 160px;
   }
-  .console-os .sidebar .navbar-sidenav .fa {
+  .console-os .sidebar .nav-sidenav .fa {
     margin-right: 10px;
   }
   .console-os .sidebar .navbar-sidebar span {
     display: inline;
   }
 }
-
-
 
 
 
