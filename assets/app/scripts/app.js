@@ -59,6 +59,7 @@ angular
     tab.icon = "dashboard";
     OPENSHIFT_BUILT_TABS.push(tab);
 
+
     tab = builder.create()
       .id(builder.join(pluginName, "browse"))
       .title(function () { return "Browse"; })
@@ -72,6 +73,7 @@ angular
       .build();
     tab.icon = "sitemap";
     OPENSHIFT_BUILT_TABS.push(tab);
+
   }])
   .config(function ($routeProvider) {
     $routeProvider
