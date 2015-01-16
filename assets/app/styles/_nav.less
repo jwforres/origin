@@ -1,3 +1,4 @@
+
 /* colors light */
 .console-os .navbar-pf {background: #34383C;}
 .console-os .navbar-project,
@@ -9,7 +10,7 @@
 .console-os .nav.nav-sidenav > li > a:hover {background-color: #d7d9dc}
 
 .console-os .navbar-project,
-.console-os .nav-sidenav > li {border-bottom: 1px solid #e0e2e4;}
+.console-os .nav-sidenav > li {border-bottom: 1px solid #d7d9dc;}
 .console-os .nav-sidenav > li > a {color: inherit;}
 
 /* colors dark
@@ -161,7 +162,7 @@
 }
 .console-os .nav-sidenav-secondary > li > a:hover, 
 .console-os .nav-sidenav-secondary > li > a:focus {
-  background-color: transparent;
+  background-color: #d7d9dc;
 }
 
 /* Misc */
@@ -201,6 +202,7 @@
     margin-left: 101px;
   }
   .console-os .sidebar {
+    border-right: 1px solid #d7d9dc;
     position: absolute;
     height: 100%;
     left: 0;
@@ -211,7 +213,7 @@
     font-size: 15px;
   }
   .console-os .navbar-sidebar span.fa {
-    font-size: 17px;
+    font-size: 16px;
   }
   .console-os .navbar-sidebar h2 {
     margin-top: 0;
@@ -262,7 +264,7 @@
     display: inline-block;
     position: absolute;
     top: 30px;
-    margin-left: 120px;
+    margin-left: 115px;
     width: 250px;
   }
   .console-os .navbar-sidebar .sidenav-secondary {
@@ -273,6 +275,13 @@
   }
   .nav.nav-sidenav-secondary {
     margin-bottom: 20px;
+  }
+  .console-os .nav-sidenav-secondary > li > a:hover, 
+  .console-os .nav-sidenav-secondary > li > a:focus {
+    padding-left: 15px;
+    padding-right: 15px;
+    margin-left: -15px;
+    margin-right: -15px;
   }
   .console-os .navbar-project-menu {
     width: 340px;
@@ -307,8 +316,11 @@
  }
  @media (min-width: 992px) { 
   .console-os .sidebar .sidebar-drawer {
-      width: 101px;
-    }
+    width: 101px;
+  }
+  .console-os .navbar-sidebar .sidenav-secondary {
+    font-size: 14px;
+  }
 }
 @media (min-width:1600px)  {
   .console-os.show-drawer .wrap {
@@ -331,8 +343,8 @@
     padding: 15px 20px;
   }
   .console-os.show-drawer .sidebar .sidenav-secondary {
-    margin-left: 180px;
-    width: 280px;
+    margin-left: 175px;
+    width: 290px;
   }
   .console-os .wrap {
     margin-left: 160px;
@@ -344,7 +356,6 @@
     display: inline;
   }
 }
-
 
 
 /* -------------------------------------------------------
