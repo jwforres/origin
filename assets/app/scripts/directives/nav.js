@@ -5,6 +5,13 @@ angular.module('openshiftConsole')
       templateUrl: 'views/_sidebar.html'
     };
   })
+  .directive('sidebarNavItem', function() {
+    return {
+      restrict: 'E',
+      replace: true,
+      templateUrl: "views/_sidebar-main-nav-item.html"
+    };
+  })
   .directive('projectNav', function($timeout, $location) {
     return {
       restrict: 'E',
