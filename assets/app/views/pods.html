@@ -6,6 +6,7 @@
     <div class="container-fluid container-main">
       <div class="row">
         <div class="col-sm-8 col-md-10">
+          <h1>Pods</h1>
           <div style="margin-bottom: 10px;" ng-repeat="pod in pods">
             <h3>{{pod.id}} ({{pod.currentState.status}})</h3>
             <pod-template ng-init="podTemplate = pod"></pod-template>

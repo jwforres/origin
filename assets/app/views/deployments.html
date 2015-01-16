@@ -6,6 +6,7 @@
     <div class="container-fluid container-main">
       <div class="row">
         <div class="col-sm-8 col-md-10">
+          <h1>Deployments</h1>
           <div style="margin-bottom: 10px;" ng-repeat="deployment in deployments">
             <h3>{{deployment.annotations.deploymentConfig}} <span class="small">({{deployment.id}})</span></h3>
             <div>Created: <relative-timestamp timestamp="deployment.creationTimestamp"></relative-timestamp></div>

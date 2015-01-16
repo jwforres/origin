@@ -6,6 +6,7 @@
     <div class="container-fluid container-main">
       <div class="row">
         <div class="col-sm-8 col-md-10">
+          <h1>Images</h1>
           <div style="margin-bottom: 10px;" ng-repeat="image in images">
             <h3>{{image.dockerImageReference | imageName}} <span class="small">({{image.metadata.name}})</span></h3>
             <div>Created: <relative-timestamp timestamp="image.metadata.creationTimestamp"></relative-timestamp></div>

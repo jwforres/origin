@@ -6,6 +6,7 @@
     <div class="container-fluid container-main">
       <div class="row">
         <div class="col-sm-8 col-md-10">
+          <h1>Builds</h1>
           <div style="margin-bottom: 10px;" ng-repeat="build in builds">
             <h3>{{build.metadata.labels.buildconfig}} <span class="small">({{build.metadata.name}})</span></h3>
             <div>Created: <relative-timestamp timestamp="build.metadata.creationTimestamp"></relative-timestamp></div>            
