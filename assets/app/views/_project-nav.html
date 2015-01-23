@@ -14,16 +14,25 @@
   </div>
   <div class="navbar-search">
     <div class="container-fluid">
-      <div class="row">
-        <div class="col-md-6 col-lg-5">
-          <!-- Make this visible again when we support the label filtering widget -->
-          <div class="form-group" style="visibility: hidden;">
-            <label class="control-label" for="boostrapSelect">Filter by labels</label>
-            <input type="search" class="form-control" placeholder="Search services and components">
+      <div class="label-filter">
+        <div class="row">
+          <div class="col-md-6 col-lg-7">
+            <div class="form-group">
+              <label class="control-label" for="boostrapSelect" style="visibility: hidden;">Filter by labels</label>
+              <div class="label-filter">
+                <select class="label-filter-key" placeholder="Filter by labels"></select>
+                <select class="label-filter-operator" style="display: none;"></select>
+                <select class="label-filter-values" multiple style="display: none;"></select>
+                <button class="label-filter-add btn btn-lg disabled" disabled><i class="fa fa-tag fa-lg"></i><i class="fa fa-plus"></i></button>
+              </div>
+            </div>
           </div>
-        </div>
-        <div class="col-md-6 col-lg-7">
-          
+          <div class="col-md-6 col-lg-5">
+            <span class="label-filter-active" style="display: none;">
+              <a href="javascript:;" class="label-filtering-remove-all label label-info"><i class="fa fa-filter" style="padding-right: 5px;"></i>Clear all filters <i class="fa fa-times"></i></a>
+            </span>
+            <span class="label-filter-active-filters"></span>
+          </div>
         </div>
       </div>
     </div>
