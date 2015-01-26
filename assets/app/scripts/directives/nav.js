@@ -58,11 +58,9 @@ angular.module('openshiftConsole')
               valueField: "key",
               labelField: "key",
               searchField: ["key"],
-              openOnFocus: true,  // why is this not working...
               options : options,
               create: true,
               persist: false,
-              maxOptions: 2,
               onItemAdd: function(value, $item) {
                 $('.selectize-control.label-filter-operator').css("display", "inline-block");
                 $('.label-filter-operator')[0].selectize.focus();
@@ -80,11 +78,10 @@ angular.module('openshiftConsole')
               valueField: "type",
               labelField: "label",
               searchField: ["label"],
-              openOnFocus: true,  // why is this not working...
               options: [
-                {type: "EXISTS", label: "(exists)"},
-                {type: "IN", label: "in (...)"},
-                {type: "NOT_IN", label: "not in (...)"}
+                {type: "EXISTS", label: "exists"},
+                {type: "IN", label: "in ..."},
+                {type: "NOT_IN", label: "not in ..."}
               ],
               onItemAdd: function(value, $item) {
                 // if we selected "EXISTS" enable the add button and stop here
@@ -118,8 +115,7 @@ angular.module('openshiftConsole')
               valueField: "value",
               labelField: "value",
               searchField: ["value"],
-              openOnFocus: true,  // why is this not working... because of webcomponent.js (chrome works),
-                                  // true is the default so dont need to actually set this
+              plugins: ['remove_button'],
               create: true,
               persist: true, // i want this to be false but there appears to be a bug in selectize where setting
                              // this to false has a side effect of causing items that were not created by the user
@@ -136,7 +132,6 @@ angular.module('openshiftConsole')
 
             $('.label-filter-add').click(function() {
               // grab the values before clearing out the fields
-              console.log();
               var key = $('.label-filter-key')[0].selectize.getValue();
               var operator = $('.label-filter-operator')[0].selectize.getValue();
               var values = $('.label-filter-values')[0].selectize.getValue();
@@ -157,7 +152,6 @@ angular.module('openshiftConsole')
                 }
                 newFilterLabel += ")";
               }
-              console.log(newFilterLabel);
 
               $('.label-filter-key')[0].selectize.clear();
               $('.selectize-control.label-filter-operator').hide();
@@ -182,6 +176,7 @@ angular.module('openshiftConsole')
                 .append(
                   $('<span>')
                     .text(newFilterLabel)
+                    .css("padding-right", "5px")
                 )
                 .append(
                   $('<i>')
