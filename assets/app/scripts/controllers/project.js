@@ -148,8 +148,8 @@ angular.module('openshiftConsole')
       for (var i = 0; i < deploymentConfig.triggers.length; i++) {
         var trigger = deploymentConfig.triggers[i];
         if (trigger.type === "ImageChange") {
-          var image = trigger.imageChangeParams.repositoryName + ":" + trigger.imageChangeParams.tag;
-          var buildImage = build.parameters.output.registry + "/" + build.parameters.output.imageTag;
+          var image = trigger.imageChangeParams.from.name;
+          var buildImage = build.parameters.output.to.name;
           if (image === buildImage) {
             if (!trigger.builds) {
               trigger.builds = {};
@@ -216,6 +216,7 @@ angular.module('openshiftConsole')
     });
 
     LabelFilter.onActiveFiltersChanged(function(activeFilters) {
-      console.log("the active filters changed", activeFilters);
+      // trigger a digest loop
+      $scope.$apply(function() {});
     });    
   });

@@ -1,7 +1,7 @@
 <div ng-controller="ProjectController">
   <project-page>
     <h1>Services</h1>
-    <div style="margin-bottom: 10px;" ng-repeat="service in services">
+    <div style="margin-bottom: 10px;" ng-repeat="service in (services | labelFilter)">
       <h3>{{service.id}}</h3>
       <div>Created: <relative-timestamp timestamp="service.creationTimestamp"></relative-timestamp></div>
       <div>IP: {{service.portalIP}}</div>

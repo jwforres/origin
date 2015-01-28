@@ -171,10 +171,7 @@ angular.module('openshiftConsole')
               var operator = $('.label-filter-operator')[0].selectize.getValue();
               var values = $('.label-filter-values')[0].selectize.getValue();
               var newFilterLabel = key;
-              if (operator == "EXISTS") {
-                key += " (exists)"
-              }
-              else {
+              if (operator != "EXISTS") {
                 if (operator == "NOT_IN") {
                   newFilterLabel += " not";
                 }

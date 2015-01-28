@@ -68,5 +68,51 @@ angular.module('openshiftConsole')
     this._onActiveFiltersChangedCallbacks.add(callback);
   };
 
+  LabelFilter.prototype.isResourceIncludedInActiveFilters = function(resource) {
+    if (!resource) {
+      return false;
+    }
+    var labels = resource.labels;
+    if (resource.metadata) {
+      labels = resource.metadata.labels || {};
+    }
+    for (var id in this._activeFilters) {
+      var filter = this._activeFilters[id];
+      switch(filter.operator) {
+        case "EXISTS":
+          if (!labels[filter.key]) {
+            return false;
+          }
+          break;
+        case "IN":
+          var keep = false;
+          if (labels[filter.key]) {
+            for (var i = 0; i < filter.values.length; i++) {
+              if (labels[filter.key] == filter.values[i]) {
+                keep = true;
+              }
+            }
+          }
+          if (!keep) {
+            return false;
+          }
+          break;
+        case "NOT_IN":
+          var keep = true;
+          if (labels[filter.key]) {
+            for (var i = 0; i < filter.values.length; i++) {
+              if (labels[filter.key] == filter.values[i]) {
+                keep = false;
+              }
+            }
+          }
+          if (!keep) {
+            return false;
+          }
+      }
+    }
+    return true;
+  };
+
   return new LabelFilter();
 }]);

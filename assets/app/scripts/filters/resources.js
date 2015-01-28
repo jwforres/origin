@@ -1,49 +1,20 @@
 angular.module('openshiftConsole')
-  .filter('labelFilter', function() {
-    return function(resources, labelFilters) {
+  .filter('labelFilter', function(LabelFilter) {
+    return function(resources) {
       var filteredResources = {};
-      $each(labelFilters, function(id, filter) {
-        $each(resources, function(resId, resource) {
-          var labels = resource.labels;
-          if (resource.metadata) {
-            labels = resource.metadata.labels || {};
-          }
-          var keep = false;
-          switch(filter.operator) {
-            case "EXISTS":
-              if (labels[filter.key]) {
-                filteredResources[resId] = resource;
-                return;
-              }
-              break;
-            case "IN":
-              if (labels[filter.key]) {
-                for (var i = 0; i < filter.values.length; i++) {
-                  if (labels[filter.key] == filter.values[i]) {
-                    filteredResources[resId] = resource;
-                    return;
-                  }
-                }
-              }
-              break;
-            case "NOT_IN":
-              var keep = true;
-              if (labels[filter.key]) {
-                for (var i = 0; i < filter.values.length; i++) {
-                  if (labels[filter.key] == filter.values[i]) {
-                    keep = false;
-                  }
-                }
-              }
-              if (keep) {
-                filteredResources[resId] = resource;
-              }
-          }
-        });
+      $each(resources, function(resId, resource) {
+        if (LabelFilter.isResourceIncludedInActiveFilters(resource)) {
+          filteredResources[resId] = resource;
+        }
       });
       return filteredResources;
     };
   })
+  .filter('labelFilterResource', function(LabelFilter) {
+    return function(resource) {
+      return LabelFilter.isResourceIncludedInActiveFilters(resource);
+    };
+  })  
   .filter('annotation', function() {
     return function(resource, key) {
       if (resource && resource.metadata && resource.metadata.annotations) {

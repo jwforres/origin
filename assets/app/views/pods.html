@@ -1,7 +1,7 @@
 <div ng-controller="ProjectController">
   <project-page>
     <h1>Pods</h1>
-    <div style="margin-bottom: 10px;" ng-repeat="pod in pods">
+    <div style="margin-bottom: 10px;" ng-repeat="pod in (pods | labelFilter)">
       <h3>{{pod.id}} ({{pod.currentState.status}})</h3>
       <pod-template ng-init="podTemplate = pod"></pod-template>
     </div>      

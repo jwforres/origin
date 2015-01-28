@@ -1,7 +1,7 @@
 <div ng-controller="ProjectController">
   <project-page>
     <h1>Builds</h1>
-    <div style="margin-bottom: 10px;" ng-repeat="build in builds">
+    <div style="margin-bottom: 10px;" ng-repeat="build in (builds | labelFilter)">
       <h3>{{build.metadata.labels.buildconfig}} <span class="small">({{build.metadata.name}})</span></h3>
       <div>Created: <relative-timestamp timestamp="build.metadata.creationTimestamp"></relative-timestamp></div>            
       <div>Status: {{build.status}}</div>
