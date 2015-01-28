@@ -213,5 +213,9 @@ angular.module('openshiftConsole')
       for (var i = 0; i < $scope.watches.length; i++) {
         DataService.unwatch($scope.watches[i]);
       }
+    });
+
+    LabelFilter.onActiveFiltersChanged(function(activeFilters) {
+      console.log("the active filters changed", activeFilters);
     });    
   });

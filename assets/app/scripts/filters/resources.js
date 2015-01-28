@@ -1,4 +1,49 @@
 angular.module('openshiftConsole')
+  .filter('labelFilter', function() {
+    return function(resources, labelFilters) {
+      var filteredResources = {};
+      $each(labelFilters, function(id, filter) {
+        $each(resources, function(resId, resource) {
+          var labels = resource.labels;
+          if (resource.metadata) {
+            labels = resource.metadata.labels || {};
+          }
+          var keep = false;
+          switch(filter.operator) {
+            case "EXISTS":
+              if (labels[filter.key]) {
+                filteredResources[resId] = resource;
+                return;
+              }
+              break;
+            case "IN":
+              if (labels[filter.key]) {
+                for (var i = 0; i < filter.values.length; i++) {
+                  if (labels[filter.key] == filter.values[i]) {
+                    filteredResources[resId] = resource;
+                    return;
+                  }
+                }
+              }
+              break;
+            case "NOT_IN":
+              var keep = true;
+              if (labels[filter.key]) {
+                for (var i = 0; i < filter.values.length; i++) {
+                  if (labels[filter.key] == filter.values[i]) {
+                    keep = false;
+                  }
+                }
+              }
+              if (keep) {
+                filteredResources[resId] = resource;
+              }
+          }
+        });
+      });
+      return filteredResources;
+    };
+  })
   .filter('annotation', function() {
     return function(resource, key) {
       if (resource && resource.metadata && resource.metadata.annotations) {

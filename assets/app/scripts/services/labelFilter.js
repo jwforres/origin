@@ -5,6 +5,7 @@ angular.module('openshiftConsole')
   function LabelFilter() {
     this._existingLabels = {};
     this._activeFilters = {};
+    this._onActiveFiltersChangedCallbacks = $.Callbacks();
   }
 
   LabelFilter.prototype.addLabelsFromResources = function(items) {
@@ -46,18 +47,25 @@ angular.module('openshiftConsole')
 
   LabelFilter.prototype.addActiveFilter = function(filterId, filterDetails) {
     this._activeFilters[filterId] = filterDetails;
+    this._onActiveFiltersChangedCallbacks.fire(this._activeFilters);
   };
 
   LabelFilter.prototype.removeActiveFilter = function(filter) {
-    delete this._activeFilters[filterId];
+    delete this._activeFilters[filter];
+    this._onActiveFiltersChangedCallbacks.fire(this._activeFilters);
   };
 
   LabelFilter.prototype.clearActiveFilters = function() {
     this._activeFilters = {};
+    this._onActiveFiltersChangedCallbacks.fire(this._activeFilters);
   };
 
   LabelFilter.prototype.getActiveFilters = function() {
     return this._activeFilters;
+  };
+
+  LabelFilter.prototype.onActiveFiltersChanged = function(callback) {
+    this._onActiveFiltersChangedCallbacks.add(callback);
   };
 
   return new LabelFilter();
