@@ -18,7 +18,7 @@ angular.module('openshiftConsole')
       templateUrl: "views/_sidebar-main-nav-item.html"
     };
   })
-  .directive('projectNav', function($timeout, $location) {
+  .directive('projectNav', function($timeout, $location, LabelFilter) {
     return {
       restrict: 'E',
       scope: {
@@ -41,29 +41,46 @@ angular.module('openshiftConsole')
               });
             });
 
-            // we would be getting this from the actual data
-            var options = [
-              {key: "test"},
-              {key: "test2"},
-              {key: "test3"}
-            ];
-
-            var optionsMap = {
-              test: [{value: "foo"}, {value: "bar"}, {value: "baz"}],
-              test2: [{value: "foo2"}, {value: "bar2"}, {value: "baz2"}],
-              test3: [{value: "foo3"}, {value: "bar3"}, {value: "baz3"}]
-            };
-
             $('.label-filter-key').selectize({
               valueField: "key",
               labelField: "key",
               searchField: ["key"],
-              options : options,
               create: true,
-              persist: false,
+              persist: true, // i want this to be false but there appears to be a bug in selectize where setting
+                             // this to false has a side effect of causing items that were not created by the user
+                             // to also disappear from the list after being removed
+              preload: true,
               onItemAdd: function(value, $item) {
+                var selectizeValues = $('.label-filter-values')[0].selectize;
+                selectizeValues.clearOptions();
+
+                //var key = $('.label-filter-key')[0].selectize.getValue();
+                // for each value for key
+                //for (var i = 0; i < optionsMap[key].length; i++) {                  
+                //  selectizeValues.addOption(optionsMap[key][i]);
+                //}
+                selectizeValues.load(function(callback) {
+                  var options = [];
+                  var key = $('.label-filter-key')[0].selectize.getValue();
+                  if (!key) {
+                    return options;
+                  }
+                  var optionsMap = LabelFilter.getLabels();
+                  //for each value for key
+                  for (var i = 0; i < optionsMap[key].length; i++) {                  
+                    options.push(optionsMap[key][i]);
+                  }                
+                  callback(options);
+                });          
+
                 $('.selectize-control.label-filter-operator').css("display", "inline-block");
-                $('.label-filter-operator')[0].selectize.focus();
+                var operator = $('.label-filter-operator')[0].selectize.getValue();
+                if (!operator) {
+                  $('.label-filter-operator')[0].selectize.focus();
+                }                
+                else {
+                  selectizeValues.focus();
+                }
               },
               onItemRemove: function(value) {
                 $('.selectize-control.label-filter-operator').hide();
@@ -71,6 +88,17 @@ angular.module('openshiftConsole')
                 $('.selectize-control.label-filter-values').hide();
                 $('.label-filter-values')[0].selectize.clear();
                 $('.label-filter-add').addClass("disabled").prop('disabled', true);
+              },
+              load: function(query, callback) {
+                var options = [
+                ];
+                var keys = LabelFilter.getLabelKeys();
+                for (var i = 0; i < keys.length; i++) {
+                  options.push({
+                    key: keys[i]
+                  });
+                }                
+                callback(options);
               }
             });
 
@@ -93,14 +121,7 @@ angular.module('openshiftConsole')
                 // otherwise
                 $('.selectize-control.label-filter-values').css("display", "inline-block");
                 var selectizeValues = $('.label-filter-values')[0].selectize;
-                selectizeValues.clearOptions();
-
-                var key = $('.label-filter-key')[0].selectize.getValue();
-                // for each value for key
-                for (var i = 0; i < optionsMap[key].length; i++) {                  
-                  selectizeValues.addOption(optionsMap[key][i]);
-                }
-                selectizeValues.focus();        
+                selectizeValues.focus();
               },
               onItemRemove: function(value) {
                 $('.selectize-control.label-filter-values').hide();
@@ -120,11 +141,25 @@ angular.module('openshiftConsole')
               persist: true, // i want this to be false but there appears to be a bug in selectize where setting
                              // this to false has a side effect of causing items that were not created by the user
                              // to also disappear from the list after being removed
+              preload: true,
               onItemAdd: function(value, $item) {
                 $('.label-filter-add').removeClass("disabled").prop('disabled', false);
               },
               onItemRemove: function(value) {
                 // disable button if we have removed all the values                
+              },
+              load: function(query, callback) {
+                var options = [];
+                var key = $('.label-filter-key')[0].selectize.getValue();
+                if (!key) {
+                  return options;
+                }
+                var optionsMap = LabelFilter.getLabels();
+                //for each value for key
+                for (var i = 0; i < optionsMap[key].length; i++) {                  
+                  options.push(optionsMap[key][i]);
+                }                
+                callback(options);
               }
             });
 
@@ -147,11 +182,12 @@ angular.module('openshiftConsole')
                 for (var i = 0; i < values.length; i++) {
                   newFilterLabel += values[i];
                   if (i != values.length - 1) {
-                    newFilterLabel += ", "
+                    newFilterLabel += ", ";
                   }
                 }
                 newFilterLabel += ")";
               }
+              var encodedFilterLabel = encodeURIComponent(newFilterLabel);
 
               $('.label-filter-key')[0].selectize.clear();
               $('.selectize-control.label-filter-operator').hide();
@@ -168,7 +204,7 @@ angular.module('openshiftConsole')
                 .click(function(e) {
                   $(e.target).closest('.label-filter-active-filter').remove();
 
-                  // TODO actually remove the filter from the saved list of active filters (not just visually)
+                  LabelFilter.removeActiveFilter(encodedFilterLabel);
                   if($('.label-filter-active-filter').length == 0) {
                     $('.label-filter-active').hide();
                   }
@@ -183,15 +219,13 @@ angular.module('openshiftConsole')
                     .addClass("fa fa-times")
                 )
                 .appendTo('.label-filter-active-filters');
-
-                // TODO actually add the filter to a saved list of active filters (not just visually)
+                LabelFilter.addActiveFilter(encodedFilterLabel, {key: key, operator: operator, values: values});
             });
 
             $('.label-filter-active').click(function() {
               $('.label-filter-active').hide();
               $('.label-filter-active-filters').empty();
-
-              // TODO actually clear out all saved filters (not just visually)
+              LabelFilter.clearActiveFilters();
             });
 
           }, 0);

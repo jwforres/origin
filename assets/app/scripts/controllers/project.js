@@ -8,7 +8,7 @@
  * Controller of the openshiftConsole
  */
 angular.module('openshiftConsole')
-  .controller('ProjectController', function ($scope, $routeParams, DataService, $filter) {
+  .controller('ProjectController', function ($scope, $routeParams, DataService, $filter, LabelFilter) {
     $scope.projectName = $routeParams.project;
     $scope.project = {};
     $scope.projectPromise = $.Deferred();
@@ -52,6 +52,7 @@ angular.module('openshiftConsole')
         $scope.pods = pods.by("metadata.name");
         $scope.podsByLabel = pods.by("labels", "metadata.name");
         podsByServiceByLabel();
+        LabelFilter.addLabelsFromResources($scope.pods);
       });
 
       console.log("podsByLabel (list)", $scope.podsByLabel);      
@@ -63,6 +64,7 @@ angular.module('openshiftConsole')
       $scope.$apply(function() {
         $scope.services = services.by("metadata.name");
         podsByServiceByLabel();  
+        LabelFilter.addLabelsFromResources($scope.services);
       });
 
       console.log("services (list)", $scope.services);
@@ -117,6 +119,7 @@ angular.module('openshiftConsole')
             parseEncodedDeploymentConfig(dep);
           });
         }
+        LabelFilter.addLabelsFromResources($scope.deployments);
       });
 
       console.log("deployments (subscribe)", $scope.deployments);
@@ -129,6 +132,7 @@ angular.module('openshiftConsole')
       $scope.$apply(function() {
         $scope.images = images.by("metadata.name");
         $scope.imagesByDockerReference = images.by("dockerImageReference");
+        LabelFilter.addLabelsFromResources($scope.images);
       });
       
       console.log("images (subscribe)", $scope.images);
@@ -172,6 +176,7 @@ angular.module('openshiftConsole')
             associateDeploymentConfigTriggersToBuild(deploymentConfig, build);
           });
         }
+        LabelFilter.addLabelsFromResources($scope.deploymentConfigs);
       });
 
       console.log("deploymentConfigs (subscribe)", $scope.deploymentConfigs);
@@ -197,6 +202,7 @@ angular.module('openshiftConsole')
         else if (action === 'DELETED'){
           // TODO
         }
+        LabelFilter.addLabelsFromResources($scope.builds);
       });
 
       console.log("builds (subscribe)", $scope.builds);
