@@ -35,6 +35,11 @@
         "components/bootstrap/dist/js/bootstrap.js",
         "components/bootstrap-select/bootstrap-select.js"
       ]
+    },
+    "selectize": {
+      "main": [
+        "dist/js/selectize.js"
+      ]
     }
   }
 }
