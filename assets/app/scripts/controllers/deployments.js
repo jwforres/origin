@@ -2,31 +2,31 @@
 
 /**
  * @ngdoc function
- * @name openshiftConsole.controller:PodsController
+ * @name openshiftConsole.controller:DeploymentsController
  * @description
  * # ProjectController
  * Controller of the openshiftConsole
  */
 angular.module('openshiftConsole')
-  .controller('PodsController', function ($scope, DataService, $filter, LabelFilter) {
-    $scope.pods = {};
-    $scope.unfilteredPods = {};
+  .controller('DeploymentsController', function ($scope, DataService, $filter, LabelFilter) {
+    $scope.deployments = {};
+    $scope.unfilteredDeployments = {};
     $scope.images = {};
     $scope.imagesByDockerReference = {};
-    $scope.builds = {};    
+    $scope.builds = {};
     $scope.labelSuggestions = {};
 
-    var podsCallback = function(pods) {
+    var deploymentsCallback = function(deployments) {
       $scope.$apply(function() {
-        $scope.unfilteredPods = pods.by("metadata.name");
-        LabelFilter.createLabelSuggestionsFromResources($scope.unfilteredPods, $scope.labelSuggestions);
+        $scope.unfilteredDeployments = deployments.by("metadata.name");
+        LabelFilter.createLabelSuggestionsFromResources($scope.unfilteredDeployments, $scope.labelSuggestions);
         LabelFilter.setLabelSuggestions($scope.labelSuggestions);
-        $scope.pods = LabelFilter.filterResources($scope.unfilteredPods);
+        $scope.deployments = LabelFilter.filterResources($scope.unfilteredDeployments);
       });
 
-      console.log("pods (subscribe)", $scope.unfilteredPods);
+      console.log("deployments (subscribe)", $scope.deployments);
     };
-    $scope.watches.push(DataService.watch("pods", $scope, podsCallback));    
+    $scope.watches.push(DataService.watch("replicationControllers", $scope, deploymentsCallback));    
 
 
     // Also load images and builds to fill out details in the pod template
@@ -48,12 +48,12 @@ angular.module('openshiftConsole')
 
       console.log("builds (subscribe)", $scope.builds);
     };
-    $scope.watches.push(DataService.watch("builds", $scope, buildsCallback));   
+    $scope.watches.push(DataService.watch("builds", $scope, buildsCallback));  
 
     LabelFilter.onActiveFiltersChanged(function(activeFilters) {
       // trigger a digest loop
       $scope.$apply(function() {
-        $scope.pods = LabelFilter.filterResources($scope.unfilteredPods);
+        $scope.deployments = LabelFilter.filterResources($scope.unfilteredDeployments);
       });
-    });   
+    });       
   });

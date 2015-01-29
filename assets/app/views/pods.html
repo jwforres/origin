@@ -1,9 +1,23 @@
 <div ng-controller="ProjectController">
   <project-page>
-    <h1>Pods</h1>
-    <div style="margin-bottom: 10px;" ng-repeat="pod in (pods | labelFilter)">
-      <h3>{{pod.id}} ({{pod.currentState.status}})</h3>
-      <pod-template ng-init="podTemplate = pod"></pod-template>
-    </div>      
+    <div ng-controller="PodsController">
+      <h1>Pods</h1>
+      <div ng-if="(pods | hashSize) == 0">
+        <div ng-if="(unfilteredPods | hashSize) > 0" role="alert" class="alert alert-warning">
+          <span class="pficon-layered">
+            <span class="pficon pficon-warning-triangle"></span>
+            <span class="pficon pficon-warning-exclamation"></span>
+          </span>
+          The active filters are hiding all pods.
+        </div>
+        <div>
+          <em>No pods to show.</em>
+        </div>
+      </div>      
+      <div style="margin-bottom: 10px;" ng-repeat="pod in pods">
+        <h3>{{pod.id}} ({{pod.currentState.status}})</h3>
+        <pod-template ng-init="podTemplate = pod"></pod-template>
+      </div>      
+    </div>
   </project-page>
 </div>

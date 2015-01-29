@@ -1,13 +1,27 @@
 <div ng-controller="ProjectController">
   <project-page>
-    <h1>Deployments</h1>
-    <div style="margin-bottom: 10px;" ng-repeat="deployment in (deployments | labelFilter)">
-      <h3>{{deployment.annotations.deploymentConfig}} <span class="small">({{deployment.id}})</span></h3>
-      <div>Created: <relative-timestamp timestamp="deployment.creationTimestamp"></relative-timestamp></div>
-      <div>Status: {{deployment.annotations.deploymentStatus}}</div>
-      <div>Version: {{deployment.annotations.deploymentVersion}}</div>
-      <div>Replicas: {{deployment.desiredState.replicas}}</div>
-      <pod-template ng-init="podTemplate = deployment.desiredState.podTemplate"></pod-template>
-    </div>      
+    <div ng-controller="DeploymentsController">
+      <h1>Deployments</h1>
+      <div ng-if="(deployments | hashSize) == 0">
+        <div ng-if="(unfilteredDeployments | hashSize) > 0" role="alert" class="alert alert-warning">
+          <span class="pficon-layered">
+            <span class="pficon pficon-warning-triangle"></span>
+            <span class="pficon pficon-warning-exclamation"></span>
+          </span>
+          The active filters are hiding all deployments.
+        </div>
+        <div>
+          <em>No deployments to show.</em>
+        </div>
+      </div>      
+      <div style="margin-bottom: 10px;" ng-repeat="deployment in deployments">
+        <h3>{{deployment.annotations.deploymentConfig}} <span class="small">({{deployment.id}})</span></h3>
+        <div>Created: <relative-timestamp timestamp="deployment.creationTimestamp"></relative-timestamp></div>
+        <div>Status: {{deployment.annotations.deploymentStatus}}</div>
+        <div>Version: {{deployment.annotations.deploymentVersion}}</div>
+        <div>Replicas: {{deployment.desiredState.replicas}}</div>
+        <pod-template ng-init="podTemplate = deployment.desiredState.podTemplate"></pod-template>
+      </div>      
+    </div>
   </project-page>
 </div>

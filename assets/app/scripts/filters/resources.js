@@ -1,20 +1,4 @@
 angular.module('openshiftConsole')
-  .filter('labelFilter', function(LabelFilter) {
-    return function(resources) {
-      var filteredResources = {};
-      $each(resources, function(resId, resource) {
-        if (LabelFilter.isResourceIncludedInActiveFilters(resource)) {
-          filteredResources[resId] = resource;
-        }
-      });
-      return filteredResources;
-    };
-  })
-  .filter('labelFilterResource', function(LabelFilter) {
-    return function(resource) {
-      return LabelFilter.isResourceIncludedInActiveFilters(resource);
-    };
-  })  
   .filter('annotation', function() {
     return function(resource, key) {
       if (resource && resource.metadata && resource.metadata.annotations) {

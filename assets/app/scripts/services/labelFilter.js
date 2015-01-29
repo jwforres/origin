@@ -8,20 +8,24 @@ angular.module('openshiftConsole')
     this._onActiveFiltersChangedCallbacks = $.Callbacks();
   }
 
-  LabelFilter.prototype.addLabelsFromResources = function(items) {
+  LabelFilter.prototype.createLabelSuggestionsFromResources = function(items, map) {
     // check if we are extracting from a single item or a hash of items
     if (items.id || (items.metadata && items.metadata.name)) {
-      this._extractLabelsFromItem(items);
+      this._extractLabelsFromItem(items, map);
     }
     else {
       var self = this;
       $each(items, function(key, item) {
-        self._extractLabelsFromItem(item);
+        self._extractLabelsFromItem(item, map);
       });
     }
   };
 
-  LabelFilter.prototype._extractLabelsFromItem = function(item) {
+  LabelFilter.prototype.setLabelSuggestions = function(suggestions) {
+    this._existingLabels = suggestions;
+  };
+
+  LabelFilter.prototype._extractLabelsFromItem = function(item, map) {
     // TODO temporary until we handle everything with item.metadata.labels
     var labels = item.labels;
     if (item.metadata) {
@@ -30,15 +34,26 @@ angular.module('openshiftConsole')
 
     var self = this;
     $each(labels, function(key, value) {
-      if (!self._existingLabels[key]) {
-        self._existingLabels[key] = [];
+      if (!map[key]) {
+        map[key] = [];
       }
-      self._existingLabels[key].push({value: value});
+      map[key].push({value: value});
     });
   };
 
   LabelFilter.prototype.onActiveFiltersChanged = function(callback) {
     this._onActiveFiltersChangedCallbacks.add(callback);
+  };
+
+  LabelFilter.prototype.filterResources = function(resources) {
+    var filteredResources = {};
+    var self = this;
+    $each(resources, function(resId, resource) {
+      if (self.isResourceIncludedInActiveFilters(resource)) {
+        filteredResources[resId] = resource;
+      }
+    });
+    return filteredResources;
   };
 
   LabelFilter.prototype.isResourceIncludedInActiveFilters = function(resource) {
@@ -109,6 +124,12 @@ angular.module('openshiftConsole')
             return options;
           }
           var optionsMap = self._existingLabels;
+          // if there are no values for this key, like when user chooses to explicitly add a key
+          // then there are no values to suggest
+          if (!optionsMap[key]) {
+            callback({});
+            return;
+          }
           //for each value for key
           for (var i = 0; i < optionsMap[key].length; i++) {                  
             options.push(optionsMap[key][i]);
@@ -198,6 +219,12 @@ angular.module('openshiftConsole')
           return options;
         }
         var optionsMap = self._existingLabels;
+        // if there are no values for this key, like when user chooses to explicitly add a key
+        // then there are no values to suggest
+        if (!optionsMap[key]) {
+          callback({});
+          return;
+        }        
         //for each value for key
         for (var i = 0; i < optionsMap[key].length; i++) {                  
           options.push(optionsMap[key][i]);
