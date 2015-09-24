@@ -30,7 +30,7 @@ angular.module('openshiftConsole')
     if ($routeParams.deploymentconfig){
       $scope.breadcrumbs.push({
         title: $routeParams.deploymentconfig,
-        link: "project/" + $routeParams.project + "/browse/deployment/" + $routeParams.deploymentconfig
+        link: "project/" + $routeParams.project + "/browse/deployments/" + $routeParams.deploymentconfig
       });
     }
     $scope.breadcrumbs.push({

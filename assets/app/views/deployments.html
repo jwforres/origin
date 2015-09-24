@@ -24,7 +24,7 @@
             <!-- Deployment config with no deployments-->
             <tr ng-if="(deploymentConfigDeployments | hashSize) == 0">
               <td>
-                <a ng-if="deploymentConfigs[deploymentConfigName]" href="project/{{projectName}}/browse/deployment/{{deploymentConfigName}}">{{deploymentConfigName}}</a>
+                <a ng-if="deploymentConfigs[deploymentConfigName]" href="project/{{projectName}}/browse/deployments/{{deploymentConfigName}}">{{deploymentConfigName}}</a>
               </td>
               <td><em>No deployments for this configuration</em></td>
               <td>&nbsp;</td>
@@ -36,7 +36,7 @@
             <tr ng-repeat="deployment in deploymentConfigDeployments | orderObjectsByDate : true" ng-if="deploymentConfigName != '' && ($first || expandedDeploymentConfigRow[deploymentConfigName])">
               <td>
                 <span ng-if="$first || deploymentConfigName == ''">
-                  <a ng-if="deploymentConfigs[deploymentConfigName]" href="project/{{projectName}}/browse/deployment/{{deploymentConfigName}}">{{deploymentConfigName}}</a>
+                  <a ng-if="deploymentConfigs[deploymentConfigName]" href="project/{{projectName}}/browse/deployments/{{deploymentConfigName}}">{{deploymentConfigName}}</a>
                   <span ng-if="!deploymentConfigs[deploymentConfigName] && deploymentConfigName != ''">
                     {{deploymentConfigName}}
                     <span class="pficon-layered" data-toggle="tooltip" data-placement="right" title="This deployment config no longer exists" style="cursor: help;">
@@ -49,10 +49,10 @@
               <td>
                 <!-- Deployment number and link -->
                 <span ng-if="deployment | annotation : 'deploymentVersion'">
-                  <a ng-href="project/{{deployment.metadata.namespace}}/browse/deployment/{{deploymentConfigName}}/{{deployment.metadata.name}}">#{{deployment | annotation : 'deploymentVersion'}}</a>
+                  <a ng-href="project/{{deployment.metadata.namespace}}/browse/deployments/{{deploymentConfigName}}/{{deployment.metadata.name}}">#{{deployment | annotation : 'deploymentVersion'}}</a>
                 </span>
                 <span ng-if="!(deployment | annotation : 'deploymentVersion')">
-                  <a ng-href="project/{{deployment.metadata.namespace}}/browse/deployment/{{deploymentConfigName}}/{{deployment.metadata.name}}">{{deployment.metadata.name}}</a>
+                  <a ng-href="project/{{deployment.metadata.namespace}}/browse/deployments/{{deploymentConfigName}}/{{deployment.metadata.name}}">{{deployment.metadata.name}}</a>
                 </span>
               </td>
               <td>
@@ -68,7 +68,8 @@
                     <span ng-switch-default class="fa fa-refresh" aria-hidden="true"></span>
                   </span>
                   <span flex>
-                  {{deploymentStatus(deployment)}}<span ng-if="deploymentStatus(deployment) == 'Deployed'">, {{deployment.spec.replicas}}/{{deployment.status.replicas}} replicas</span>
+                    {{deploymentStatus(deployment)}}<span ng-if="deploymentStatus(deployment) == 'Deployed'">, 
+                    <span ng-if="deployment.spec.replicas !== deployment.status.replicas">{{deployment.status.replicas}}/</span>{{deployment.spec.replicas}} replica<span ng-if="deployment.spec.replicas != 1">s</span></span>
                   </span>
                 </div>
                 <!-- TODO would be nice to have the deploymentStatusReason in a popup, when there is one -->
@@ -118,11 +119,11 @@
           <tbody>
             <tr ng-repeat="deployment in deploymentsByDeploymentConfig[''] | orderObjectsByDate : true">
               <td>
-                <a ng-href="project/{{deployment.metadata.namespace}}/browse/replicationcontroller/{{deployment.metadata.name}}">{{deployment.metadata.name}}</a>
+                <a ng-href="project/{{deployment.metadata.namespace}}/browse/replicationcontrollers/{{deployment.metadata.name}}">{{deployment.metadata.name}}</a>
               </td>
               <td>
                 <span class="fa fa-check text-success" aria-hidden="true"></span>
-                <span>Deployed, {{deployment.spec.replicas}}/{{deployment.status.replicas}} replicas</span>
+                <span>Deployed, <span ng-if="deployment.status.replicas !== deployment.spec.replicas">{{deployment.status.replicas}}/</span>{{deployment.spec.replicas}} replica<span ng-if="deployment.spec.replicas != 1">s</span></span>
               </td>
               <td>
                 <relative-timestamp timestamp="deployment.metadata.creationTimestamp"></relative-timestamp>

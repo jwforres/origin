@@ -25,7 +25,7 @@
           <!-- Build config with no builds-->
           <tr ng-if="(buildConfigBuilds | hashSize) == 0">
             <td>
-              <a href="project/{{projectName}}/browse/build/{{buildConfigName}}">{{buildConfigName}}</a>
+              <a href="project/{{projectName}}/browse/builds/{{buildConfigName}}">{{buildConfigName}}</a>
             </td>
             <td><em>No builds for this configuration</em></td>
             <td>&nbsp;</td>
@@ -38,7 +38,7 @@
           <tr ng-repeat="build in buildConfigBuilds | orderObjectsByDate : true" ng-if="$first || expandedBuildConfigRow[buildConfigName]">
             <td>
               <span ng-if="$first">
-                <a ng-if="buildConfigs[buildConfigName]" href="project/{{projectName}}/browse/build/{{buildConfigName}}">{{buildConfigName}}</a>
+                <a ng-if="buildConfigs[buildConfigName]" href="project/{{projectName}}/browse/builds/{{buildConfigName}}">{{buildConfigName}}</a>
                 <span ng-if="!buildConfigs[buildConfigName]">
                   {{buildConfigName}}
                   <span class="pficon-layered" data-toggle="tooltip" data-placement="right" title="This build config no longer exists" style="cursor: help;">
@@ -51,10 +51,10 @@
             <td>
               <!-- Build number and link -->
               <span ng-if="build | annotation : 'buildNumber'">
-                <a ng-href="project/{{build.metadata.namespace}}/browse/build/{{buildConfigName}}/{{build.metadata.name}}">#{{build | annotation : 'buildNumber'}}</a>
+                <a ng-href="project/{{build.metadata.namespace}}/browse/builds/{{buildConfigName}}/{{build.metadata.name}}">#{{build | annotation : 'buildNumber'}}</a>
               </span>
               <span ng-if="!(build | annotation : 'buildNumber')">
-                <a ng-href="project/{{build.metadata.namespace}}/browse/build/{{buildConfigName}}/{{build.metadata.name}}">{{build.metadata.name}}</a>
+                <a ng-href="project/{{build.metadata.namespace}}/browse/builds/{{buildConfigName}}/{{build.metadata.name}}">{{build.metadata.name}}</a>
               </span>
             </td>
             <td>
@@ -74,7 +74,7 @@
                   <span ng-switch="build.status.phase" class="hide-ng-leave">
                     <span ng-switch-when="Complete"> in {{(build.status.startTimestamp || build.metadata.creationTimestamp) | duration : build.status.completionTimestamp}}</span>
                     <span ng-switch-when="Failed">after {{build.status.startTimestamp | duration : build.status.completionTimestamp}}</span>
-                    <span ng-switch-when="Cancelled"> after {{build.status.startTimestamp | duration : build.status.completionTimestamp}}</span>                  
+                    <span ng-switch-when="Cancelled"> after {{(build.status.startTimestamp || build.metadata.creationTimestamp) | duration : build.status.completionTimestamp}}</span>                  
                     <span ng-switch-when="Running"> for <duration-until-now timestamp="build.status.startTimestamp"></duration-until-now></span>
                     <span ng-switch-when="New">, waiting for <duration-until-now timestamp="build.metadata.creationTimestamp"></duration-until-now></span>
                     <span ng-switch-when="Pending"> for <duration-until-now timestamp="build.metadata.creationTimestamp"></duration-until-now></span>

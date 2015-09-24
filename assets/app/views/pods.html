@@ -19,7 +19,7 @@
         <tbody>
           <tr ng-if="(pods | hashSize) == 0"><td colspan="5"><em>{{emptyMessage}}</em></td></tr>
           <tr ng-repeat="pod in pods | orderObjectsByDate : true">
-            <td><a href="project/{{projectName}}/browse/pod/{{pod.metadata.name}}">{{pod.metadata.name}}</a></td>
+            <td><a href="project/{{projectName}}/browse/pods/{{pod.metadata.name}}">{{pod.metadata.name}}</a></td>
             <td>
               <div row class="status">
                 <span ng-switch="pod.status.phase" class="status-icon">

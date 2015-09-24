@@ -22,7 +22,7 @@ angular.module('openshiftConsole')
       },
       {
         title: $routeParams.buildconfig,
-        link: "project/" + $routeParams.project + "/browse/build/" + $routeParams.buildconfig
+        link: "project/" + $routeParams.project + "/browse/builds/" + $routeParams.buildconfig
       },      
       {
         title: $routeParams.build

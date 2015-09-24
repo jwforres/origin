@@ -94,10 +94,10 @@
             <td>
               <!-- Deployment number and link -->
               <span ng-if="deployment | annotation : 'deploymentVersion'">
-                <a ng-href="project/{{deployment.metadata.namespace}}/browse/deployment/{{deploymentConfig.metadata.name}}/{{deployment.metadata.name}}">#{{deployment | annotation : 'deploymentVersion'}}</a>
+                <a ng-href="project/{{deployment.metadata.namespace}}/browse/deployments/{{deploymentConfig.metadata.name}}/{{deployment.metadata.name}}">#{{deployment | annotation : 'deploymentVersion'}}</a>
               </span>
               <span ng-if="!(deployment | annotation : 'deploymentVersion')">
-                <a ng-href="project/{{deployment.metadata.namespace}}/browse/deployment/{{deploymentConfig.metadata.name}}/{{deployment.metadata.name}}">{{deployment.metadata.name}}</a>
+                <a ng-href="project/{{deployment.metadata.namespace}}/browse/deployments/{{deploymentConfig.metadata.name}}/{{deployment.metadata.name}}">{{deployment.metadata.name}}</a>
               </span>
             </td>
             <td>
@@ -113,7 +113,8 @@
                   <span ng-switch-default class="fa fa-refresh" aria-hidden="true"></span>
                 </span>
                 <span flex>
-                {{deploymentStatus(deployment)}}<span ng-if="deploymentStatus(deployment) == 'Deployed'">, {{deployment.spec.replicas}}/{{deployment.status.replicas}} replicas</span>
+                  {{deploymentStatus(deployment)}}<span ng-if="deploymentStatus(deployment) == 'Deployed'">, 
+                  <span ng-if="deployment.spec.replicas !== deployment.status.replicas">{{deployment.status.replicas}}/</span>{{deployment.spec.replicas}} replica<span ng-if="deployment.spec.replicas != 1">s</span></span>
                 </span>
                 <!-- TODO would be nice to have the deploymentStatusReason in a popup, when there is one -->
               </div>

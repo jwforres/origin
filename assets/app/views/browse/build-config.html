@@ -151,10 +151,10 @@
             <td>
               <!-- Build number and link -->
               <span ng-if="build | annotation : 'buildNumber'">
-                <a ng-href="project/{{build.metadata.namespace}}/browse/build/{{buildConfig.metadata.name}}/{{build.metadata.name}}">#{{build | annotation : 'buildNumber'}}</a>
+                <a ng-href="project/{{build.metadata.namespace}}/browse/builds/{{buildConfig.metadata.name}}/{{build.metadata.name}}">#{{build | annotation : 'buildNumber'}}</a>
               </span>
               <span ng-if="!(build | annotation : 'buildNumber')">
-                <a ng-href="project/{{build.metadata.namespace}}/browse/build/{{buildConfig.metadata.name}}/{{build.metadata.name}}">{{build.metadata.name}}</a>
+                <a ng-href="project/{{build.metadata.namespace}}/browse/builds/{{buildConfig.metadata.name}}/{{build.metadata.name}}">{{build.metadata.name}}</a>
               </span>
             </td>
             <td>
@@ -174,7 +174,7 @@
                   <span ng-switch="build.status.phase" class="hide-ng-leave">
                     <span ng-switch-when="Complete"> in {{(build.status.startTimestamp || build.metadata.creationTimestamp) | duration : build.status.completionTimestamp}}</span>
                     <span ng-switch-when="Failed">after {{build.status.startTimestamp | duration : build.status.completionTimestamp}}</span>
-                    <span ng-switch-when="Cancelled"> after {{build.status.startTimestamp | duration : build.status.completionTimestamp}}</span>                  
+                    <span ng-switch-when="Cancelled"> after {{(build.status.startTimestamp || build.metadata.creationTimestamp) | duration : build.status.completionTimestamp}}</span>                  
                     <span ng-switch-when="Running"> for <duration-until-now timestamp="build.status.startTimestamp"></duration-until-now></span>
                     <span ng-switch-when="New">, waiting for <duration-until-now timestamp="build.metadata.creationTimestamp"></duration-until-now></span>
                     <span ng-switch-when="Pending">, waiting for <duration-until-now timestamp="build.metadata.creationTimestamp"></duration-until-now></span>
