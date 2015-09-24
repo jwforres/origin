@@ -869,10 +869,11 @@ angular.module('openshiftConsole')
       // TODO let the data object handle its own update
       this._data(resource, context).update(eventData.object, eventData.type);
       var self = this;
-      // Wrap in $apply to mirror $http callback behavior
-      $rootScope.$apply(function() {
+      // Wrap in a $timout which will trigger an $apply to mirror $http callback behavior
+      // without timeout this is triggering a repeated digest loop
+      $timeout(function() {
         self._watchCallbacks(resource, context).fire(self._data(resource, context), eventData.type, eventData.object);
-      });
+      }, 0);
     }
     catch (e) {
       // TODO: surface in the UI?

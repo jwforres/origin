@@ -218,7 +218,7 @@ angular
     // Use setInterval instead of $interval because we're directly manipulating the DOM and don't want scope.$apply overhead
     setInterval(function() {
       $('.timestamp[data-timestamp]').text(function(i, existing) {
-        return dateRelativeFilter($(this).attr("data-timestamp")) || existing;
+        return dateRelativeFilter($(this).attr("data-timestamp"), $(this).attr("data-drop-suffix")) || existing;
       });
     }, 30 * 1000);
     setInterval(function() {

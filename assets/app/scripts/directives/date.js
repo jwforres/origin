@@ -8,7 +8,7 @@ angular.module('openshiftConsole')
         timestamp: '=',
         dropSuffix: '=?'
       },
-      template: '<span data-timestamp="{{timestamp}}" class="timestamp" title="{{timestamp | date : \'short\'}}">{{timestamp | dateRelative : dropSuffix}}</span>'
+      template: '<span data-timestamp="{{timestamp}}" data-drop-suffix="{{dropSuffix}}" class="timestamp" title="{{timestamp | date : \'short\'}}">{{timestamp | dateRelative : dropSuffix}}</span>'
     };
   })
   .directive("durationUntilNow", function() {

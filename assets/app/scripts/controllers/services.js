@@ -38,7 +38,7 @@ angular.module('openshiftConsole')
 
     watches.push(DataService.watch("routes", $scope, function(routes){
         $scope.routes = routes.by("metadata.name");
-        $scope.emptyMessageRoutes = "No services to show";
+        $scope.emptyMessageRoutes = "No routes to show";
         $scope.routesByService = routesByService($scope.routes);
         Logger.log("routes (subscribe)", $scope.routesByService);
     }));
