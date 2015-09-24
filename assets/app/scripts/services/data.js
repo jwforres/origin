@@ -721,7 +721,18 @@ angular.module('openshiftConsole')
   DataService.prototype._uniqueKeyForResourceContext = function(resource, context) {
     // Note: when we start handling selecting multiple projects this
     // will change to include all relevant scope
-    return resource + "/" + context.projectName;
+    if (context.project && context.project.metadata) {
+      return resource + "/" + context.project.metadata.name;
+    }
+    else if (context.namespace) {
+      return resource + "/" + context.namespace; 
+    }
+    else if (context.projectName) {
+      return resource + "/" + context.projectName;      
+    }
+    else {
+      return resource;
+    }
   };
 
   DataService.prototype._startListOp = function(resource, context) {
