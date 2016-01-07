@@ -14,13 +14,14 @@ import (
 
 // unionAuthenticationHandler is an oauth.AuthenticationHandler that muxes multiple challenge handlers and redirect handlers
 type unionAuthenticationHandler struct {
-	challengers  map[string]AuthenticationChallenger
-	redirectors  map[string]AuthenticationRedirector
-	errorHandler AuthenticationErrorHandler
+	challengers    map[string]AuthenticationChallenger
+	redirectors    map[string]AuthenticationRedirector
+	errorHandler   AuthenticationErrorHandler
+	selectProvider *SelectProvider
 }
 
 // NewUnionAuthenticationHandler returns an oauth.AuthenticationHandler that muxes multiple challenge handlers and redirect handlers
-func NewUnionAuthenticationHandler(passedChallengers map[string]AuthenticationChallenger, passedRedirectors map[string]AuthenticationRedirector, errorHandler AuthenticationErrorHandler) AuthenticationHandler {
+func NewUnionAuthenticationHandler(passedChallengers map[string]AuthenticationChallenger, passedRedirectors map[string]AuthenticationRedirector, errorHandler AuthenticationErrorHandler, selectProvider *SelectProvider) AuthenticationHandler {
 	challengers := passedChallengers
 	if challengers == nil {
 		challengers = make(map[string]AuthenticationChallenger, 1)
@@ -31,7 +32,7 @@ func NewUnionAuthenticationHandler(passedChallengers map[string]AuthenticationCh
 		redirectors = make(map[string]AuthenticationRedirector, 1)
 	}
 
-	return &unionAuthenticationHandler{challengers, redirectors, errorHandler}
+	return &unionAuthenticationHandler{challengers, redirectors, errorHandler, selectProvider}
 }
 
 const (
@@ -146,6 +147,11 @@ func (authHandler *unionAuthenticationHandler) AuthenticationNeeded(apiClient au
 	}
 
 	if (len(authHandler.redirectors)) == 1 {
+		// TODO JWF should be if the config setting is set, redirectors should really be an array for consistent ordering
+		if true {
+			authHandler.selectProvider.render.Render(authHandler.redirectors, w, req)
+			return true, nil
+		}
 		// there has to be a better way
 		for _, redirectHandler := range authHandler.redirectors {
 			err := redirectHandler.AuthenticationRedirect(w, req)

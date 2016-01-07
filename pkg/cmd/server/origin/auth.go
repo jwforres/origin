@@ -421,7 +421,18 @@ func (c *AuthConfig) getAuthenticationHandler(mux cmdutil.Mux, errorHandler hand
 		challengers["placeholder"] = placeholderchallenger.New(OpenShiftOAuthTokenRequestURL(c.Options.MasterPublicURL))
 	}
 
-	authHandler := handlers.NewUnionAuthenticationHandler(challengers, redirectors, errorHandler)
+	var selectProviderTemplateFile string
+	if c.Options.Templates != nil {
+		selectProviderTemplateFile = c.Options.Templates.SelectProvider
+	}
+	selectProviderRenderer, err := handlers.NewSelectProviderRenderer(selectProviderTemplateFile)
+	if err != nil {
+		return nil, err
+	}
+
+	selectProvider := handlers.NewSelectProvider(selectProviderRenderer)
+
+	authHandler := handlers.NewUnionAuthenticationHandler(challengers, redirectors, errorHandler, selectProvider)
 	return authHandler, nil
 }
 

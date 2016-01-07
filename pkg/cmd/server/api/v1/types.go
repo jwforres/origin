@@ -423,6 +423,10 @@ type OAuthTemplates struct {
 	// Login is a path to a file containing a go template used to render the login page.
 	// If unspecified, the default login page is used.
 	Login string `json:"login"`
+
+	// SelectProvider is a path to a file containing a go template used to render the provider selection page.
+	// If unspecified, the default provider selection page is used.
+	SelectProvider string `json:"selectProvider"`
 }
 
 type ServiceAccountConfig struct {
