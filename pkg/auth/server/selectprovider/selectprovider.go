@@ -1,4 +1,4 @@
-package handlers
+package selectprovider
 
 // TODO JWF dont like that this is currently in handlers but it needs access to stuff in handlers and stuff in handlers needs access to it so would have to move some types into a separate package to move it out
 
@@ -7,6 +7,7 @@ import (
 	"html/template"
 	"net/http"
 
+	"github.com/openshift/origin/pkg/auth/oauth/handlers"
 	"k8s.io/kubernetes/pkg/util"
 )
 
@@ -15,22 +16,26 @@ const (
 )
 
 type SelectProviderRenderer interface {
-	Render(redirectors map[string]AuthenticationRedirector, w http.ResponseWriter, req *http.Request)
+	Render(redirectors []handlers.ProviderInfo, w http.ResponseWriter, req *http.Request)
 }
 
 type SelectProvider struct {
-	render SelectProviderRenderer
+	render            SelectProviderRenderer
+	forceInterstitial bool
 }
 
-func NewSelectProvider(render SelectProviderRenderer) *SelectProvider {
+var _ = handlers.AuthenticationSelectionHandler(&SelectProvider{})
+
+func NewSelectProvider(render SelectProviderRenderer, forceInterstitial bool) *SelectProvider {
 	return &SelectProvider{
-		render: render,
+		render:            render,
+		forceInterstitial: forceInterstitial,
 	}
 }
 
-type Providers struct {
+type ProviderData struct {
 	// TODO JWF should be an array for consistent ordering but have to plumb that all the way through...
-	Redirectors map[string]AuthenticationRedirector
+	Providers []handlers.ProviderInfo
 }
 
 // NewSelectProviderRenderer creates a select provider renderer that takes in an optional custom template to
@@ -48,6 +53,19 @@ func NewSelectProviderRenderer(customSelectProviderTemplateFile string) (*select
 	}
 
 	return r, nil
+}
+
+func (s *SelectProvider) SelectAuthentication(providers []handlers.ProviderInfo, w http.ResponseWriter, req *http.Request) (handlers.ProviderInfo, bool, error) {
+	if len(providers) == 0 {
+		return handlers.ProviderInfo{}, false, nil
+	}
+
+	if len(providers) == 1 && !s.forceInterstitial {
+		return providers[0], false, nil
+	}
+
+	s.render.Render(providers, w, req)
+	return handlers.ProviderInfo{}, true, nil
 }
 
 // TODO JWF validate the selectProvider template
@@ -108,10 +126,10 @@ type selectProviderTemplateRenderer struct {
 	selectProviderTemplate *template.Template
 }
 
-func (r selectProviderTemplateRenderer) Render(redirectors map[string]AuthenticationRedirector, w http.ResponseWriter, req *http.Request) {
+func (r selectProviderTemplateRenderer) Render(providers []handlers.ProviderInfo, w http.ResponseWriter, req *http.Request) {
 	w.Header().Add("Content-Type", "text/html")
 	w.WriteHeader(http.StatusOK)
-	if err := r.selectProviderTemplate.Execute(w, Providers{Redirectors: redirectors}); err != nil {
+	if err := r.selectProviderTemplate.Execute(w, ProviderData{Providers: providers}); err != nil {
 		util.HandleError(fmt.Errorf("unable to render select provider template: %v", err))
 	}
 }
@@ -176,9 +194,10 @@ const defaultSelectProviderTemplateString = `<!DOCTYPE html>
   </head>
   <body>
 
-    {{ range $redirectorName, $redirector := .Redirectors }}
-      <!-- TODO JWF yuck, maybe we shouldn't rely on this happening within the template and pass something in instead  -->
-      <a href="javascript: window.location.search = window.location.search + ((window.location.search.length > 0) ? '&' : '?') + 'useRedirectHandler={{ $redirectorName }}'">{{ $redirectorName }}</div>
+    {{ range $provider := .Providers }}
+			<div>
+      <a href="{{$provider.URL}}">{{$provider.ID}}</a>
+			</div>
     {{ end }}
 
   </body>

@@ -455,6 +455,9 @@ type OAuthConfig struct {
 	// AssetPublicURL is used for building valid client redirect URLs for external access
 	AssetPublicURL string
 
+	// AlwaysShowProviderSelection ...
+	AlwaysShowProviderSelection bool
+
 	//IdentityProviders is an ordered list of ways for a user to identify themselves
 	IdentityProviders []IdentityProvider
 
@@ -475,9 +478,9 @@ type OAuthTemplates struct {
 	// If unspecified, the default login page is used.
 	Login string
 
-	// SelectProvider is a path to a file containing a go template used to render the provider selection page.
+	// ProviderSelection is a path to a file containing a go template used to render the provider selection page.
 	// If unspecified, the default provider selection page is used.
-	SelectProvider string
+	ProviderSelection string
 }
 
 type ServiceAccountConfig struct {

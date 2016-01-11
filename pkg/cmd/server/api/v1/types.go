@@ -404,6 +404,9 @@ type OAuthConfig struct {
 	// AssetPublicURL is used for building valid client redirect URLs for external access
 	AssetPublicURL string `json:"assetPublicURL"`
 
+	// AlwaysShowProviderSelection ...
+	AlwaysShowProviderSelection bool `json:"alwaysShowProviderSelection"`
+
 	//IdentityProviders is an ordered list of ways for a user to identify themselves
 	IdentityProviders []IdentityProvider `json:"identityProviders"`
 
@@ -424,9 +427,9 @@ type OAuthTemplates struct {
 	// If unspecified, the default login page is used.
 	Login string `json:"login"`
 
-	// SelectProvider is a path to a file containing a go template used to render the provider selection page.
+	// ProviderSelection is a path to a file containing a go template used to render the provider selection page.
 	// If unspecified, the default provider selection page is used.
-	SelectProvider string `json:"selectProvider"`
+	ProviderSelection string `json:"providerSelection"`
 }
 
 type ServiceAccountConfig struct {

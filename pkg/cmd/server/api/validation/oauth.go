@@ -98,6 +98,8 @@ func ValidateOAuthConfig(config *api.OAuthConfig) ValidationResults {
 			)))
 	}
 
+	// TODO: validate
+
 	if config.Templates != nil && len(config.Templates.Login) > 0 {
 		content, err := ioutil.ReadFile(config.Templates.Login)
 		if err != nil {

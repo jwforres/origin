@@ -32,6 +32,15 @@ type AuthenticationErrorHandler interface {
 	AuthenticationError(error, http.ResponseWriter, *http.Request) (handled bool, err error)
 }
 
+type ProviderInfo struct {
+	ID  string
+	URL string
+}
+
+type AuthenticationSelectionHandler interface {
+	SelectAuthentication([]ProviderInfo, http.ResponseWriter, *http.Request) (selected ProviderInfo, handled bool, err error)
+}
+
 // AuthenticationSuccessHandler reacts to a user authenticating
 type AuthenticationSuccessHandler interface {
 	// AuthenticationSucceeded reacts to a user authenticating, returns true if the response was written,
