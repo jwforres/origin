@@ -254,6 +254,9 @@ angular.module('openshiftConsole')
    */
   .filter("valuesIn", function(){
     return function(entries, keys){
+      if (!keys) {
+        return {};
+      }
       var readonly = keys.split(",");
       var result = {};
       angular.forEach(entries, function(value, key){
@@ -273,6 +276,9 @@ angular.module('openshiftConsole')
    */
   .filter("valuesNotIn", function(){
     return function(entries, keys){
+      if (!keys) {
+        return entries;
+      }
       var readonly = keys.split(",");
       var result = {};
       angular.forEach(entries, function(value, key){

@@ -14,7 +14,7 @@
               <div class="col-md-12">
                 <p ng-if="emptyCatalog && !loaded">Loading...</p>
 
-                <div ng-if="emptyCatalog && loaded && !nonBuilderImages.length" class="empty-state-message empty-state-full-page">
+                <div ng-if="emptyCatalog && loaded && !nonBuilderImages.length" class="empty-state-message">
                   <h2 class="text-center">No images or templates.</h2>
 
                   <p class="gutter-top">
@@ -36,7 +36,11 @@
                 <p ng-if="emptyCatalog && loaded && nonBuilderImages.length">No builder images or templates.</p>
 
                 <div ng-show="!emptyCatalog">
-                  <h1>Select Image or Template</h1>
+                  <h1>Add Components to Your Project</h1>
+
+                  <uib-tabset>
+                  <uib-tab active="selectedTab.fromCatalog">
+                  <uib-tab-heading>From Catalog</uib-tab-heading>
 
                   <div class="row">
                     <!-- Right padding to line up cleanly with the left column tiles. -->
@@ -159,6 +163,16 @@
                       <div style="height: 0;" class="tile-image"></div>
                     </div>
                   </div>
+                  </uib-tab>
+                  <uib-tab active="selectedTab.fromDockerImage">
+                  <uib-tab-heading>From Docker Image</uib-tab-heading>
+                    <run-docker-image
+                        project="projectName"
+                        context="context"
+                        alerts="alerts">
+                    </run-docker-image>
+                  </uib-tab>
+                  </uib-tabset>
                 </div>
               </div>
             </div>
