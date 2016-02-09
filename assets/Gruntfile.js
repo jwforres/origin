@@ -42,7 +42,10 @@ module.exports = function (grunt) {
         files: ['<%= yeoman.app %>/scripts/{,*/}*.js'],
         tasks: ['newer:jshint:all'],
         options: {
-          livereload: '<%= connect.options.livereload %>'
+          livereload: {
+            key: grunt.file.read('livereload.key'),
+            cert: grunt.file.read('livereload.crt')
+          }
         }
       },
       jsTest: {
