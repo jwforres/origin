@@ -1,4 +1,10 @@
 <ul class="nav navbar-nav navbar-right navbar-iconic">
+  <li hawtio-extension name="nav-system-status">
+    <a class="nav-item-iconic system-status project-action-btn" id="status" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+      <span title="System Status" class="fa status-icon pficon-warning-triangle-o"></span>
+      <span class="status-issue system-status-mobile">2 open issues</span>
+    </a>
+  </li>
   <li uib-dropdown>
     <a uib-dropdown-toggle class="nav-item-iconic" id="dropdownMenu1">
       <span title="Help" class="fa pficon-help" aria-hidden="true"></span>
@@ -10,10 +16,12 @@
       <li><a href="about">About</a></li>
     </ul>
   </li>
+  <li>
+  </li>
   <li uib-dropdown ng-cloak ng-if="user">
     <a href="" uib-dropdown-toggle id="user-dropdown" class="nav-item-iconic">
       <span class="pf-icon pficon-user" aria-hidden="true"></span>
-      <span class="username">{{user.fullName || user.metadata.name}}</span> <span class="caret" aria-hidden="true"></span>
+      <span class="username truncate">{{user.fullName || user.metadata.name}}</span> <span class="caret" aria-hidden="true"></span>
     </a>
     <ul class="uib-dropdown-menu" aria-labelledby="user-dropdown">
       <li>
