@@ -56,6 +56,15 @@ module.exports = function (grunt) {
         files: '<%= yeoman.app %>/styles/*.less',
         tasks: ['less']
       },
+      html: {
+        files: '<%= yeoman.app %>/views/{,*/}*.html',
+        options: {
+          livereload: {
+            key: grunt.file.read('livereload.key'),
+            cert: grunt.file.read('livereload.crt')
+          }
+        }        
+      },
       extensions: {
         files: ['extensions/extensions.js', 'extensions/extensions.css'],
         tasks: ['copy:extensions']
