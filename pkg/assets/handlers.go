@@ -3,14 +3,11 @@ package assets
 import (
 	"bytes"
 	"compress/gzip"
-	"encoding/hex"
 	"fmt"
 	"html/template"
 	"io"
 	"net/http"
-	"path"
 	"regexp"
-	"sort"
 	"strings"
 
 	"github.com/openshift/origin/pkg/quota/admission/clusterresourceoverride/api"
@@ -52,94 +49,23 @@ func GzipHandler(h http.Handler) http.Handler {
 	})
 }
 
-func generateEtag(r *http.Request, version string, varyHeaders []string) string {
-	varyHeaderValues := ""
-	for _, varyHeader := range varyHeaders {
-		varyHeaderValues += r.Header.Get(varyHeader)
-	}
-	return fmt.Sprintf("W/\"%s_%s\"", version, hex.EncodeToString([]byte(varyHeaderValues)))
-}
-
-func CacheControlHandler(version string, h http.Handler) http.Handler {
+// ReverseProxyHeaderHandler strips all other headers except those whitelisted below
+func ReverseProxyHeaderHandler(h http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		vary := w.Header().Get("Vary")
-		varyHeaders := []string{}
-		if vary != "" {
-			varyHeaders = varyHeaderRegexp.Split(vary, -1)
-		}
-		etag := generateEtag(r, version, varyHeaders)
-
-		if r.Header.Get("If-None-Match") == etag {
-			w.WriteHeader(http.StatusNotModified)
-			return
-		}
-
-		// Clients must revalidate their cached copy every time.
-		w.Header().Add("Cache-Control", "public, max-age=0, must-revalidate")
-		w.Header().Add("ETag", etag)
+		proxiedHeader := http.Header{}
+		proxiedHeader.Add("Accept", r.Header.Get("Accept"))
+		proxiedHeader.Add("Accept-Encoding", r.Header.Get("Accept-Encoding"))
+		proxiedHeader.Add("Accept-Language", r.Header.Get("Accept-Language"))
+		proxiedHeader.Add("Cache-Control", r.Header.Get("Cache-Control"))
+		proxiedHeader.Add("Connection", r.Header.Get("Connection"))
+		proxiedHeader.Add("Host", r.Header.Get("Host"))
+		proxiedHeader.Add("If-None-Match", r.Header.Get("If-None-Match"))
+		proxiedHeader.Add("If-Modified-Since", r.Header.Get("If-Modified-Since"))
+		proxiedHeader.Add("Referer", r.Header.Get("Referer"))
+		proxiedHeader.Add("User-Agent", r.Header.Get("User-Agent"))
+		r.Header = proxiedHeader
 		h.ServeHTTP(w, r)
-
 	})
-}
-
-type LongestToShortest []string
-
-func (s LongestToShortest) Len() int {
-	return len(s)
-}
-func (s LongestToShortest) Swap(i, j int) {
-	s[i], s[j] = s[j], s[i]
-}
-func (s LongestToShortest) Less(i, j int) bool {
-	return len(s[i]) > len(s[j])
-}
-
-// HTML5ModeHandler will serve any static assets we know about, all other paths
-// are assumed to be HTML5 paths for the console application and index.html will
-// be served.
-// contextRoot must contain leading and trailing slashes, e.g. /console/
-//
-// subcontextMap is a map of keys (subcontexts, no leading or trailing slashes) to the asset path (no
-// leading slash) to serve for that subcontext if a resource that does not exist is requested
-func HTML5ModeHandler(contextRoot string, subcontextMap map[string]string, h http.Handler, getAsset AssetFunc) (http.Handler, error) {
-	subcontextData := map[string][]byte{}
-	subcontexts := []string{}
-
-	for subcontext, index := range subcontextMap {
-		b, err := getAsset(index)
-		if err != nil {
-			return nil, err
-		}
-		base := path.Join(contextRoot, subcontext)
-		// Make sure the base always ends in a trailing slash but don't end up with a double trailing slash
-		if !strings.HasSuffix(base, "/") {
-			base += "/"
-		}
-		b = bytes.Replace(b, []byte(`<base href="/">`), []byte(fmt.Sprintf(`<base href="%s">`, base)), 1)
-		subcontextData[subcontext] = b
-		subcontexts = append(subcontexts, subcontext)
-	}
-
-	// Sort by length, longest first
-	sort.Sort(LongestToShortest(subcontexts))
-
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		urlPath := strings.TrimPrefix(r.URL.Path, "/")
-		if _, err := getAsset(urlPath); err != nil {
-			// find the index we want to serve instead
-			for _, subcontext := range subcontexts {
-				prefix := subcontext
-				if subcontext != "" {
-					prefix += "/"
-				}
-				if urlPath == subcontext || strings.HasPrefix(urlPath, prefix) {
-					w.Write(subcontextData[subcontext])
-					return
-				}
-			}
-		}
-		h.ServeHTTP(w, r)
-	}), nil
 }
 
 var versionTemplate = template.Must(template.New("webConsoleVersion").Parse(`

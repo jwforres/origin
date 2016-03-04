@@ -4,19 +4,18 @@ import (
 	"crypto/tls"
 	"fmt"
 	"net/http"
+	"net/http/httputil"
 	"net/url"
 	"path"
 	"strings"
 	"time"
 
-	"github.com/elazarl/go-bindata-assetfs"
 	"github.com/emicklei/go-restful"
 	"github.com/golang/glog"
 
 	"github.com/openshift/origin/pkg/api"
 	"github.com/openshift/origin/pkg/api/latest"
 	"github.com/openshift/origin/pkg/assets"
-	"github.com/openshift/origin/pkg/assets/java"
 	configapi "github.com/openshift/origin/pkg/cmd/server/api"
 	"github.com/openshift/origin/pkg/cmd/server/crypto"
 	cmdutil "github.com/openshift/origin/pkg/cmd/util"
@@ -107,46 +106,7 @@ func (c *AssetConfig) Run() {
 	glog.Infof("Web console available at %s", c.Options.PublicURL)
 }
 
-func (c *AssetConfig) buildAssetHandler() (http.Handler, error) {
-	assets.RegisterMimeTypes()
-
-	publicURL, err := url.Parse(c.Options.PublicURL)
-	if err != nil {
-		glog.Fatal(err)
-	}
-
-	assetFunc := assets.JoinAssetFuncs(assets.Asset, java.Asset)
-	assetDirFunc := assets.JoinAssetDirFuncs(assets.AssetDir, java.AssetDir)
-
-	handler := http.FileServer(&assetfs.AssetFS{Asset: assetFunc, AssetDir: assetDirFunc, Prefix: ""})
-
-	// Map of context roots (no leading or trailing slash) to the asset path to serve for requests to a missing asset
-	subcontextMap := map[string]string{
-		"":     "index.html",
-		"java": "java/index.html",
-	}
-
-	handler, err = assets.HTML5ModeHandler(publicURL.Path, subcontextMap, handler, assetFunc)
-	if err != nil {
-		return nil, err
-	}
-
-	// Cache control should happen after all Vary headers are added, but before
-	// any asset related routing (HTML5ModeHandler and FileServer)
-	handler = assets.CacheControlHandler(oversion.Get().GitCommit, handler)
-
-	// Gzip first so that inner handlers can react to the addition of the Vary header
-	handler = assets.GzipHandler(handler)
-
-	return handler, nil
-}
-
 func (c *AssetConfig) addHandlers(mux *http.ServeMux) error {
-	assetHandler, err := c.buildAssetHandler()
-	if err != nil {
-		return err
-	}
-
 	publicURL, err := url.Parse(c.Options.PublicURL)
 	if err != nil {
 		return err
@@ -158,7 +118,12 @@ func (c *AssetConfig) addHandlers(mux *http.ServeMux) error {
 	}
 
 	// Web console assets
-	mux.Handle(publicURL.Path, http.StripPrefix(publicURL.Path, assetHandler))
+	// TODO how do we know the location of the console
+	rpURL, err := url.Parse("http://localhost:32801")
+	if err != nil {
+		return err
+	}
+	mux.Handle(publicURL.Path, http.StripPrefix(publicURL.Path, assets.ReverseProxyHeaderHandler(httputil.NewSingleHostReverseProxy(rpURL))))
 
 	originResources := sets.NewString()
 	k8sResources := sets.NewString()
