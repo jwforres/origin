@@ -20,7 +20,7 @@
                 <a href=""
                    class="dropdown-toggle actions-dropdown-kebab visible-xs-inline"
                    data-toggle="dropdown"><i class="fa fa-ellipsis-v"></i><span class="sr-only">Actions</span></a>
-                <ul class="dropdown-menu actions action-link">
+                 <ul class="dropdown-menu actions action-link">
                   <li>
                     <a ng-href="project/{{project.metadata.name}}/create-route?service={{service.metadata.name}}"
                        role="button">Create Route</a>
@@ -31,6 +31,8 @@
                       kind="Service"
                       alerts="alerts">
                     </edit-link>
+                  </li>
+                  <li class="action-extension" extension-point extension-name="service-links" extension-types="dom" extension-args="[service]">
                   </li>
                   <li>
                     <delete-link

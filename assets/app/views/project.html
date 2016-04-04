@@ -130,6 +130,7 @@
                         <h2 ng-if="!displayRouteByService[serviceId]">
                           <a class="service" href="{{service | navigateResourceURL}}">{{serviceId}}</a>
                         </h2>
+                        <div extension-point extension-name="service-links" extension-types="link dom" extension-args="[service]"></div>
                       </div>
 
                       <div class="component meta-data">
