@@ -77,6 +77,9 @@
 
     extensionRegistry.add('service-links', _.spread(function(service) {
       var data = configureData(service);
+      if (!data) {
+        return undefined;
+      }
       return {
         type: 'dom',
         node: template,
