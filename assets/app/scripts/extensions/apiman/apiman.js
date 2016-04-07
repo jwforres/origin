@@ -12,11 +12,16 @@
 
   hawtioPluginLoader.registerPreBootstrapTask(function(next) {
     // TODO need to figure out apiman service discovery
-    APIMAN_URL = 'https://apiman.vagrant.f8';
+    APIMAN_URL = 'https://apiman-default.vagrant.f8';
     next();
   });
 
-  function createApimanUri(name, namespace) {
+  function createApimanLinkUri() {
+    var uri = new URI(APIMAN_URL).path('apiman/link');
+    return uri;
+  }
+
+  function createApimanPageUri(name, namespace) {
     var uri = new URI(APIMAN_URL);
     uri.path('apimanui/api-manager/orgs/').segment(namespace).segment('apis').segment(name);
     return uri;
@@ -24,61 +29,59 @@
 
   var _module = angular.module(pluginName, []);
 
+  _module.controller('Apiman.LinkController', ['$scope', '$element', function ($scope, $element) {
+    $scope.go = function() {
+      var form = $element.find('form');
+      form.submit();
+    }
+  }]);
+
   _module.run(['AuthService', 'BaseHref', 'DataService', 'extensionRegistry', '$sce', function(AuthService, BaseHref, DataService, extensionRegistry, $sce) {
     if (!APIMAN_URL) {
       return;
     }
-    $sce.trustAsResourceUrl(APIMAN_URL);
 
-    var linkTemplate = new URITemplate([
-      '#backTo={backlink}'
-    ].join(''));
+    // This is the page we POST to first
+    var linkUri = createApimanLinkUri();
+    log.debug("apiman link: ", linkUri.toString());
+    var link = $sce.trustAsResourceUrl(linkUri.toString());
 
     var template = `
-      <div>
-        <a href="" ng-click="item.data.gotoApiView($event, item.data)">Manage API</a>
+      <div ng-controller="Apiman.LinkController">
+        <form action="{{item.data.link}}" method="POST">
+          <input type="hidden" name="redirect" value="{{item.data.redirect}}">
+          <input type="hidden" name="access_token" value="{{item.data.accessToken}}">
+        </form>
+        <a href="" ng-click="go()">Manage API</a>
       </div>
     `;
 
     function configureData(service) {
       if (!service.metadata.annotations) {
-        return undefined;
+        return;
       }
       var annotation = service.metadata.annotations[APIMANAGER_ANNOTATION];
       if (!annotation || annotation !== APIMAN) {
-        return undefined;
+        return;
       }
       var name = service.metadata.name;
       var namespace = service.metadata.namespace;
-
-      var gotoApiView = function($event, item) {
-        // TODO this is still WIP
-        var token = AuthService.UserStore().getToken();
-        $.ajax(APIMAN_URL, {
-          method: 'OPTIONS',
-          success: function (data) {
-            var url = createApimanUr(item.name, item.namespace);
-            console.log("Target URL: ", url);
-          },
-          error: function (jqxhr, text, status) {
-
-          },
-          beforeSend: function(req) {
-            req.setRequestHeader('Authorization', 'Bearer ' + token);
-          }
-        });
-      };
+      var redirect = createApimanPageUri(name, namespace)
+                        .hash('#backTo=' + URI.encode(new URI().toString()))
+                        .toString();
+      log.debug("target apiman page: ", redirect);
+      var token = AuthService.UserStore().getToken();
       return {
-        namespace: namespace,
-        name: name,
-        gotoApiView: gotoApiView
+        link: link,
+        redirect: $sce.trustAsResourceUrl(redirect),
+        accessToken: token
       }
     }
 
     extensionRegistry.add('service-links', _.spread(function(service) {
       var data = configureData(service);
       if (!data) {
-        return undefined;
+        return;
       }
       return {
         type: 'dom',
