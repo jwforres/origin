@@ -17,7 +17,7 @@
   });
 
   function createApimanLinkUri() {
-    var uri = new URI(APIMAN_URL).path('apiman/link');
+    var uri = new URI(APIMAN_URL).path('apimanui/link');
     return uri;
   }
 
@@ -67,7 +67,7 @@
       var name = service.metadata.name;
       var namespace = service.metadata.namespace;
       var redirect = createApimanPageUri(name, namespace)
-                        .hash('#backTo=' + URI.encode(new URI().toString()))
+                        .hash('#' + URI.encode('{"backTo": "' + new URI().toString()) + '"}')
                         .toString();
       log.debug("target apiman page: ", redirect);
       var token = AuthService.UserStore().getToken();
