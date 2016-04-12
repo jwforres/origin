@@ -239,7 +239,7 @@
                       deployment-config-id="deploymentConfigId"
                       deployment-config-missing="deploymentConfigs && !deploymentConfigs[deploymentConfigId]"
                       deployment-config-different-service="deploymentConfigs[deploymentConfigId] && !deploymentConfigsByService[''][deploymentConfigId]"
-                      scalable="true"
+                      scalable="isScalable(deployment, deploymentConfigId)"
                       hpa="getHPA(deployment.metadata.name, deploymentConfigId)"
                       limit-ranges="limitRanges"
                       project="project"
