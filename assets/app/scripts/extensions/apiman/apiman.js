@@ -47,13 +47,13 @@
     var link = $sce.trustAsResourceUrl(linkUri.toString());
 
     var template = `
-      <div ng-controller="Apiman.LinkController">
+      <span ng-controller="Apiman.LinkController">
         <form action="{{item.data.link}}" method="POST">
           <input type="hidden" name="redirect" value="{{item.data.redirect}}">
           <input type="hidden" name="access_token" value="{{item.data.accessToken}}">
         </form>
         <a href="" ng-click="go()">Manage API</a>
-      </div>
+      </span>
     `;
 
     function configureData(service) {
