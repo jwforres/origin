@@ -125,20 +125,21 @@
         .spacer {
           line-height: 75%;
         }
-        .add-route-link {
-          text-transform: none;
-          display: inline-block;
-          //@media (max-width: @screen-sm-max) {
-          //}
-        }
-        .service-links {
-          display: inline-block;
-        }
         .service-links > div {
-          padding-left: 5px;
-          margin-left: 5px;
+          position: relative;
           display: inline-block;
-          // border-left: 1px solid @gray-light;
+        }
+        .service-links > div + div {
+          margin-left: 20px;
+          &:before {
+            background-color: @gray;
+            content: '';
+            height: 14px;
+            left: -10px;
+            position: absolute;
+            top: 2px;
+            width: 1px; 
+          }
         }
         h2,h3 {
           margin: 0 0 5px;
