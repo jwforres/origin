@@ -118,10 +118,27 @@
             margin-right: 5px;
           }
         }
-        .add-route-link {
-          text-transform: none;
-          @media (max-width: @screen-sm-max) {
-            display: inline-block;
+        .ports {
+          display: block;
+          vertical-align: top;
+        }
+        .spacer {
+          line-height: 75%;
+        }
+        .service-links > div {
+          position: relative;
+          display: inline-block;
+        }
+        .service-links > div + div {
+          margin-left: 20px;
+          &:before {
+            background-color: @gray-light;
+            content: '';
+            height: 14px;
+            left: -10px;
+            position: absolute;
+            top: 2px;
+            width: 1px; 
           }
         }
         h2,h3 {
