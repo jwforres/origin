@@ -109,7 +109,7 @@
                       <span ng-if="containerStateReason || containerStatusKey">
                         <span class="dash">&mdash;</span>
                         <status-icon status="containerStateReason || (containerStatusKey | capitalize)"></status-icon>
-                        <span>{{containerStateReason || containerStatusKey | sentenceCase}}</span>
+                        <span>{{containerStateReason || containerStatusKey | camelToSentenceCase}}</span>
                       </span>
 
                       <span ng-if="containerStartTime && !logEmpty">

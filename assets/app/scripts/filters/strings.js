@@ -1,15 +1,25 @@
 'use strict';
 angular.module('openshiftConsole')
-  .filter('sentenceCase', function() {
-    // Converts a camel case string to sentence case
+  .filter('upperFirst', function() {
+    // Uppercase the first letter of a string (without making any other changes).
+    // Different than `capitalize` because it doesn't lowercase other letters.
     return function(str) {
       if (!str) {
         return str;
       }
 
-      // Unfortunately, _.lowerCase() and _.upperFirst() aren't in our lodash version.
+      return str.charAt(0).toUpperCase() + str.slice(1);
+    };
+  })
+  .filter('camelToSentenceCase', function(upperFirstFilter) {
+    // Converts a camel case string to sentence case.
+    return function(str) {
+      if (!str) {
+        return str;
+      }
+
       var lower = _.startCase(str).toLowerCase();
-      return lower.charAt(0).toUpperCase() + lower.slice(1);
+      return upperFirstFilter(lower);
     };
   })
   .filter('startCase', function () {

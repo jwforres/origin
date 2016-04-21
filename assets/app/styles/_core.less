@@ -213,11 +213,25 @@
   .btn {
     margin: 10px 0 20px;
   }
-}
-
-.empty-state-message.empty-state-full-page {
-  @media (min-height: 500px) {
+  .hero-icon {
+    // Hidden at height <600px.
+    display: none;
+    @media (min-height:600px) {
+      display: inline-block;
+      font-size: 90px;
+    }
+  }
+  @media (min-height:800px) {
     margin-top: 150px;
+    .hero-icon {
+      font-size: 100px;
+    }
+  }
+  @media (min-height:1024px) {
+    margin-top: 200px;
+    .hero-icon {
+      font-size: 120px;
+    }
   }
 }
 
@@ -396,6 +410,17 @@ label.checkbox {
     // Line up the description and filter controls with left column tiles.
     .catalog-header-left {
       padding-right: 15px;
+    }
+  }
+}
+
+.run-docker-image {
+  h2 small {
+    display: block;
+    margin-top: 5px;
+    @media (min-width:@screen-md-min) {
+      display: inline-block;
+      margin-top: 0;
     }
   }
 }
