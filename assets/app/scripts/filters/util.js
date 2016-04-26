@@ -329,6 +329,10 @@ angular.module('openshiftConsole')
       if (error.message) {
         return error.message;
       }
+      
+      if (result.message) {
+        return result.message;
+      }
 
       var status = result.status || error.status;
       if (status) {

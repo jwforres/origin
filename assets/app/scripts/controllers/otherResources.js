@@ -45,11 +45,12 @@ angular.module('openshiftConsole')
     });
     AlertMessageService.clearAlerts();
 
+    var context = {};
     ProjectsService
       .get($routeParams.project)
-      .then(_.spread(function(project, context) {
+      .then(_.spread(function(project, _context) {
         $scope.project = project;
-        $scope.context = context;
+        context = _context;
         $scope.kindSelector.disabled = false;
       }));
 
@@ -74,7 +75,9 @@ angular.module('openshiftConsole')
       DataService.list({
           group: selected.group,
           resource: APIService.kindToResource(selected.kind)
-        }, $scope.context, function(resources) {
+        }, context, null, {errorNotification: false})
+      .then(function(resources) {
+        // Success
         $scope.unfilteredResources = resources.by("metadata.name");
         // Clear the suggestions since they'll be different for each resource type
         $scope.labelSuggestions = {};
@@ -83,6 +86,17 @@ angular.module('openshiftConsole')
         $scope.resources = LabelFilter.getLabelSelector().select($scope.unfilteredResources);
         $scope.emptyMessage = "No " + APIService.kindToResource(selected.kind, true) + " to show";
         updateFilterWarning();
+      }, function(data, status, headers, config) {
+        // Error
+        $scope.unfilteredResources = $scope.resources = {};
+        $scope.labelSuggestions = {};
+        LabelFilter.setLabelSuggestions($scope.labelSuggestions);
+        $scope.emptyMessage = "Failed to load " + APIService.kindToResource(selected.kind, true) + ".";
+        $scope.alerts["resources"] = {
+          type: "error",
+          message: "The " + APIService.kindToResource(selected.kind, true) + " could not be loaded.",
+          details: "Reason: " + $filter('getErrorDetails')(data)
+        };        
       });   
     }
     $scope.loadKind = loadKind;

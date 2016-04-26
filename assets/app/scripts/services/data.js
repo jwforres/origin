@@ -77,6 +77,7 @@ angular.module('openshiftConsole')
 
   function DataService() {
     this._listCallbacksMap = {};
+    this._listPromisesMap = {};
     this._watchCallbacksMap = {};
     this._watchObjectCallbacksMap = {};
     this._watchOperationMap = {};
@@ -96,29 +97,41 @@ angular.module('openshiftConsole')
 
 // resource:  API resource (e.g. "pods")
 // context:   API context (e.g. {project: "..."})
-// callback:  function to be called with the list of the requested resource and context,
+// callback:  (optional) function to be called with the list of the requested resource and context,
 //            parameters passed to the callback:
 //            Data:   a Data object containing the (context-qualified) results
 //                    which includes a helper method for returning a map indexed
 //                    by attribute (e.g. data.by('metadata.name'))
-// opts:      options (currently none, placeholder)
+// opts:      errorNotification - will popup an error notification if the API request fails (default true)
+// returns promise that will be resolved or rejected when the list operation is complete
   DataService.prototype.list = function(resource, context, callback, opts) {
     resource = APIService.toResourceGroupVersion(resource);
     var callbacks = this._listCallbacks(resource, context);
-    callbacks.add(callback);
+    if (callback) {
+      callbacks.add(callback);
+    }
+
+    var deferred = $q.defer();
+    var promises = this._listPromises(resource, context);
+    promises.push(deferred);
 
     if (this._watchInFlight(resource, context) && this._resourceVersion(resource, context)) {
       // A watch operation is running, and we've already received the
       // initial set of data for this resource
       callbacks.fire(this._data(resource, context));
       callbacks.empty();
+      deferred.resolve(this._data(resource, context));
+      this._listPromises(resource, context, []);
     }
     else if (this._listInFlight(resource, context)) {
-      // no-op, our callback will get called when listOperation completes
+      // no-op, our callback / promise will get called when listOperation completes
+      // note: the first list operation requested wins when it comes to the errorNotification option
     }
     else {
-      this._startListOp(resource, context);
+      this._startListOp(resource, context, opts);
     }
+    
+    return deferred.promise;
   };
 
 // resource:  API resource (e.g. "pods")
@@ -698,6 +711,17 @@ DataService.prototype.createStream = function(resource, name, context, opts, isR
     }
     return this._listCallbacksMap[key];
   };
+  
+  DataService.prototype._listPromises = function(resource, context, promises) {
+    var key = this._uniqueKeyForResourceContext(resource, context);
+    if (promises) {
+      this._listPromisesMap[key] = promises;
+    }
+    if (!this._listPromisesMap[key]) {
+      this._listPromisesMap[key] = [];
+    }
+    return this._listPromisesMap[key];
+  };  
 
   // maybe change these
   DataService.prototype._watchInFlight = function(resource, context, op) {
@@ -855,7 +879,8 @@ DataService.prototype.createStream = function(resource, name, context, opts, isR
     }
   };
 
-  DataService.prototype._startListOp = function(resource, context) {
+  DataService.prototype._startListOp = function(resource, context, opts) {
+    opts = opts || {};
     // mark the operation as in progress
     this._listInFlight(resource, context, true);
 
@@ -869,12 +894,8 @@ DataService.prototype.createStream = function(resource, name, context, opts, isR
         }).success(function(data, status, headerFunc, config, statusText) {
           self._listOpComplete(resource, context, data);
         }).error(function(data, status, headers, config) {
-          var msg = "Failed to list " + resource;
-          if (status !== 0) {
-            msg += " (" + status + ")";
-          }
-          // TODO would like to make this optional with an errorNotification option, see get for an example
-          Notification.error(msg);
+          // mark list op as complete
+          self._listOpError(resource, context, opts, data, status, headers, config);
         });
       });
     }
@@ -886,12 +907,7 @@ DataService.prototype.createStream = function(resource, name, context, opts, isR
       }).success(function(data, status, headerFunc, config, statusText) {
         self._listOpComplete(resource, context, data);
       }).error(function(data, status, headers, config) {
-        var msg = "Failed to list " + resource;
-        if (status !== 0) {
-          msg += " (" + status + ")";
-        }
-        // TODO would like to make this optional with an errorNotification option, see get for an example
-        Notification.error(msg);
+        self._listOpError(resource, context, opts, data, status, headers, config);
       });
     }
   };
@@ -914,9 +930,13 @@ DataService.prototype.createStream = function(resource, name, context, opts, isR
 
     this._resourceVersion(resource, context, data.resourceVersion || data.metadata.resourceVersion);
     this._data(resource, context, data.items);
-    this._listCallbacks(resource, context).fire(this._data(resource, context));
+    var callbackResp = this._data(resource, context);
+    this._listCallbacks(resource, context).fire(callbackResp);
     this._listCallbacks(resource, context).empty();
-    this._watchCallbacks(resource, context).fire(this._data(resource, context));
+    _.each(this._listPromises(resource, context), function(promise) {
+      promise.resolve(callbackResp);
+    });
+    this._watchCallbacks(resource, context).fire(callbackResp);
 
     // mark list op as complete
     this._listInFlight(resource, context, false);
@@ -930,6 +950,22 @@ DataService.prototype.createStream = function(resource, name, context, opts, isR
       else if (!this._watchInFlight(resource, context)) {
         this._startWatchOp(resource, context, this._resourceVersion(resource, context));
       }
+    }
+  };
+
+  DataService.prototype._listOpError = function(resource, context, opts, data, status, headers, config) {
+    // mark list op as complete
+    this._listInFlight(resource, context, false);
+    _.each(this._listPromises(resource, context), function(promise) {
+      promise.reject(data, status, headers, config);
+    });
+    
+    if (opts.errorNotification !== false) {
+      var msg = "Failed to list " + resource;
+      if (status !== 0) {
+        msg += " (" + status + ")";
+      }
+      Notification.error(msg);
     }
   };
 
