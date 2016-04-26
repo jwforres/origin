@@ -1,21 +1,23 @@
-<div class="row" style="max-width: 650px;">
-  <div class="col-sm-4 col-sm-push-8 text-center">
-    <pod-status-chart
-        pods="podsForDeployment"
-        ng-if="podsForDeployment"
-        desired="deployment.spec.replicas"
-        ng-click="viewPodsForDeployment()"
-        ng-class="{ clickable: (podsForDeployment | hashSize) > 0 }"
-        style="display: inline-block;">
-    </pod-status-chart>
-    <!-- Add a link for screen readers. -->
-    <a href=""
-       class="sr-only"
-       ng-click="viewPodsForDeployment()"
-       ng-if="(podsForDeployment | hashSize) > 0"
-       role="button">
-       View pods for deployment.metadata.name
-    </a>
+<div class="row">
+  <div class="col-sm-4 col-sm-push-8">
+    <div class="deployment-pod-status-chart">
+      <pod-status-chart
+          pods="podsForDeployment"
+          ng-if="podsForDeployment"
+          desired="deployment.spec.replicas"
+          ng-click="viewPodsForDeployment()"
+          ng-class="{ clickable: (podsForDeployment | hashSize) > 0 }"
+          style="display: inline-block;">
+      </pod-status-chart>
+      <!-- Add a link for screen readers. -->
+      <a href=""
+         class="sr-only"
+         ng-click="viewPodsForDeployment()"
+         ng-if="(podsForDeployment | hashSize) > 0"
+         role="button">
+         View pods for deployment.metadata.name
+      </a>
+    </div>
   </div>
   <div class="col-sm-8 col-sm-pull-4">
     <dl class="dl-horizontal left">
@@ -83,25 +85,20 @@
       </dd>
     </dl>
   </div>
-</div>
-<annotations annotations="deployment.metadata.annotations"></annotations>
-<div class="row">
-  <div class="col-lg-6">
-    <div class="deployment-detail">
-      <h3>Template</h3>
-      <pod-template
-        pod-template="deployment.spec.template"
-        images-by-docker-reference="imagesByDockerReference"
-        builds="builds"
-        detailed="true"
-        add-health-check-url="{{(!deploymentConfig || isActive) ? healthCheckURL : ''}}">
-      </pod-template>
-      <h4>Volumes</h4>
-      <p ng-if="!deployment.spec.template.spec.volumes.length">
-        <a ng-href="project/{{project.metadata.name}}/attach-pvc?deployment={{deployment.metadata.name}}">Attach storage</a>
-      </p>
-      <volumes volumes="deployment.spec.template.spec.volumes" namespace="project.metadata.name"></volumes>
-    </div>
+  <div class="col-sm-12 deployment-detail">
+    <h3>Template</h3>
+    <pod-template
+      pod-template="deployment.spec.template"
+      images-by-docker-reference="imagesByDockerReference"
+      builds="builds"
+      detailed="true"
+      add-health-check-url="{{(!deploymentConfig || isActive) ? healthCheckURL : ''}}">
+    </pod-template>
+    <h4>Volumes</h4>
+    <p ng-if="!deployment.spec.template.spec.volumes.length">
+      <a ng-href="project/{{project.metadata.name}}/attach-pvc?deployment={{deployment.metadata.name}}">Attach storage</a>
+    </p>
+    <volumes volumes="deployment.spec.template.spec.volumes" namespace="project.metadata.name"></volumes>
   </div>
 </div>
 
@@ -145,3 +142,8 @@
     </hpa>
   </div>
 </div>
+
+<h3>Pods</h3>
+<pods-table pods="podsForDeployment"></pods-table>
+
+<annotations annotations="deployment.metadata.annotations"></annotations>
