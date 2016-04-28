@@ -185,7 +185,7 @@ os::cmd::expect_success 'oadm policy reconcile-cluster-roles --additive-only --c
 os::cmd::expect_success_and_text 'oc get clusterroles/basic-user -o json' 'custom-label'
 os::cmd::expect_success_and_text 'oc get clusterroles/basic-user -o json' 'custom-annotation'
 os::cmd::expect_success_and_text 'oc get clusterroles/basic-user -o json' 'groups'
-os::cmd::expect_success 'oadm policy reconcile-cluster-roles --confirm'
+os::cmd::expect_success 'oadm policy reconcile-cluster-roles --additive-only=false --confirm'
 os::cmd::expect_success_and_not_text 'oc get clusterroles/basic-user -o yaml' 'groups'
 echo "admin-reconcile-cluster-roles: ok"
 os::test::junit::declare_suite_end
@@ -352,6 +352,25 @@ os::cmd::expect_success 'oadm policy reconcile-sccs --confirm --additive-only=fa
 os::cmd::expect_success_and_not_text 'oc get scc/restricted -o yaml' 'topic: my-foo-bar'
 echo "reconcile-scc: ok"
 os::test::junit::declare_suite_end
+
+
+os::test::junit::declare_suite_start "cmd/admin/policybinding-required"
+# Admin can't bind local roles without cluster-admin permissions
+os::cmd::expect_success "oc create -f test/extended/fixtures/roles/empty-role.yaml -n cmd-admin"
+os::cmd::expect_success "oc delete policybinding/cmd-admin:default -n cmd-admin"
+os::cmd::expect_success 'oadm policy add-role-to-user admin local-admin  -n cmd-admin'
+os::cmd::try_until_text "oc policy who-can get policybindings -n cmd-admin" "local-admin"
+os::cmd::expect_success 'oc login -u local-admin -p pw'
+os::cmd::expect_failure 'oc policy add-role-to-user empty-role other --role-namespace=cmd-admin'
+os::cmd::expect_success 'oc login -u system:admin'
+os::cmd::expect_success "oc create policybinding cmd-admin -n cmd-admin"
+os::cmd::expect_success 'oc login -u local-admin -p pw'
+os::cmd::expect_success 'oc policy add-role-to-user empty-role other --role-namespace=cmd-admin -n cmd-admin'
+os::cmd::expect_success 'oc login -u system:admin'
+os::cmd::expect_success "oc delete role/empty-role -n cmd-admin"
+echo "policybinding-required: ok"
+os::test::junit::declare_suite_end
+
 
 os::test::junit::declare_suite_start "cmd/admin/user-group-cascade"
 # Create test users/identities and groups
