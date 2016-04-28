@@ -86,10 +86,12 @@ func TestConfigReader(t *testing.T) {
 			name:          "choke on out-of-bounds ratio",
 			config:        bytes.NewReader([]byte(invalidConfig)),
 			expectInvalid: true,
+			expectErr:     true,
 		}, {
 			name:          "complain about no settings",
 			config:        bytes.NewReader([]byte(invalidConfig2)),
 			expectInvalid: true,
+			expectErr:     true,
 		},
 	}
 	for _, test := range tests {
@@ -213,21 +215,13 @@ func TestLimitRequestAdmission(t *testing.T) {
 	}
 
 	for _, test := range tests {
-		var reader io.Reader
-		if test.config != nil { // we would get nil with the plugin un-configured
-			config, err := configapilatest.WriteYAML(test.config)
-			if err != nil {
-				t.Fatalf("unexpected: %v", err)
-			}
-			reader = bytes.NewReader(config)
-		}
-		c, err := newClusterResourceOverride(fake.NewSimpleClientset(), reader)
+		c, err := newClusterResourceOverride(fake.NewSimpleClientset(), test.config)
 		if err != nil {
 			t.Errorf("%s: config de/serialize failed: %v", test.name, err)
 			continue
 		}
 		c.(*clusterResourceOverridePlugin).SetProjectCache(fakeProjectCache(test.namespace))
-		attrs := admission.NewAttributesRecord(test.object, unversioned.GroupKind{}, test.namespace.Name, "name", kapi.Resource("pods"), "", admission.Create, fakeUser())
+		attrs := admission.NewAttributesRecord(test.object, unversioned.GroupVersionKind{}, test.namespace.Name, "name", kapi.Resource("pods").WithVersion("version"), "", admission.Create, fakeUser())
 		if err := c.Admit(attrs); err != nil {
 			t.Errorf("%s: admission controller should not return error", test.name)
 		}
