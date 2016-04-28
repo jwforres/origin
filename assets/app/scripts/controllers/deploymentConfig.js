@@ -19,7 +19,7 @@ angular.module('openshiftConsole')
                         Navigate,
                         ProjectsService,
                         LabelFilter,
-                        annotationNameFilter) {
+                        labelNameFilter) {
     $scope.projectName = $routeParams.project;
     $scope.deploymentConfigName = $routeParams.deploymentconfig;
     $scope.deploymentConfig = null;
@@ -151,7 +151,7 @@ angular.module('openshiftConsole')
               // http is passed to underlying $http calls
               http: {
                 params: {
-                  labelSelector: annotationNameFilter('deploymentConfig')+'='+ $scope.deploymentConfigName
+                  labelSelector: labelNameFilter('deploymentConfig')+'='+ $scope.deploymentConfigName
                 }
               }
             }

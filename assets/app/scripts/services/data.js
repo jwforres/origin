@@ -959,7 +959,7 @@ DataService.prototype.createStream = function(resource, name, context, opts, isR
           params.namespace = project.metadata.name;
           $ws({
             method: "WATCH",
-            url: self._urlForResource(resource, null, context, true, params),  // TODO (bpeterse): does the params need to be here to be included?  probs!
+            url: self._urlForResource(resource, null, context, true, params),
             auth:      {},
             onclose:   $.proxy(self, "_watchOpOnClose",   resource, context, opts),
             onmessage: $.proxy(self, "_watchOpOnMessage", resource, context, opts),
@@ -1031,7 +1031,7 @@ DataService.prototype.createStream = function(resource, name, context, opts, isR
     }
   };
 
-  DataService.prototype._watchOpOnClose = function(resource, context, opts, event) { 
+  DataService.prototype._watchOpOnClose = function(resource, context, opts, event) {
     var eventWS = event.target;
     var key = this._uniqueKeyForResourceContext(resource, null, context, _.get(opts, 'http.params'));
 
@@ -1109,7 +1109,7 @@ DataService.prototype.createStream = function(resource, name, context, opts, isR
     Logger.log("Rewatching for resource/context", resource, context);
     this._watchInFlight(key, true);
     setTimeout(
-      $.proxy(this, "_startWatchOp", key, resource, context, opts, this._resourceVersion(key)),  // TODO (bpeterse) : need params?
+      $.proxy(this, "_startWatchOp", key, resource, context, opts, this._resourceVersion(key)),
       2000
     );
   };
